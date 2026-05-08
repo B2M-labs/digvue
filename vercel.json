@@ -1,4 +1,7 @@
 {
-  "buildCommand": null,
-  "outputDirectory": "sys"
+  "buildCommand": "cd sys && npm install && npm run build",
+  "outputDirectory": "sys/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
