@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(mkdir -p /Users/brunodev/GitHub/digvue/src/screens /Users/brunodev/GitHub/digvue/src/components)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s 'https://api.pexels.com/v1/search?query=romance+couple+emotional&per_page=5&orientation=portrait' -H 'Authorization: aUlj3cmUbqqTeCa8ZJJJWHRWs9O4qZQwWSpfSdE8osX8F8juGbnjmclh')",
+      "Bash(curl -s 'https://api.pexels.com/v1/search?query=drama+conflict+tension+face&per_page=5&orientation=portrait' -H 'Authorization: aUlj3cmUbqqTeCa8ZJJJWHRWs9O4qZQwWSpfSdE8osX8F8juGbnjmclh')",
+      "Bash(curl -s 'https://api.pexels.com/v1/search?query=mystery+night+suspense&per_page=5&orientation=portrait' -H 'Authorization: aUlj3cmUbqqTeCa8ZJJJWHRWs9O4qZQwWSpfSdE8osX8F8juGbnjmclh')",
+      "Bash(python3)",
+      "Bash(mkdir -p /Users/brunodev/GitHub/digvue/sys/public/assets/thumbnails && cp /Users/brunodev/GitHub/digvue/layout/assets/thumbnails/*.jpg /Users/brunodev/GitHub/digvue/sys/public/assets/thumbnails/ && ls /Users/brunodev/GitHub/digvue/sys/public/assets/thumbnails/)",
+      "WebFetch(domain:www.amazon.com.br)",
+      "Bash(curl -s \"https://images-na.ssl-images-amazon.com/images/P/B0FLX9C5F1.01.AC._SX300_.jpg\")",
+      "Bash(ls /tmp/ | grep -E \"\\\\.\\(jpg|jpeg|png|gif|webp\\)\" | head -20)",
+      "Read(//private/tmp/**)",
+      "Bash(find ~/Downloads -newer /tmp -name \"*.jpg\" -o -name \"*.png\" 2>/dev/null | head -10)",
+      "Read(//Users/brunodev/Downloads/**)"
+    ],
+    "additionalDirectories": [
+      "/Users/brunodev/GitHub/digvue/src",
+      "/Users/brunodev/GitHub/digvue/layout/assets/thumbnails"
+    ]
+  }
+}

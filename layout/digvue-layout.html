@@ -1,0 +1,3157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DigVue - Layout Padrão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================
+     VARIÁVEIS DE CORES (igual paleta de pintor)
+     ============================================ */
+  :root {
+    --laranja: #FF6B1A;
+    --laranja-claro: #FF8A47;
+    --laranja-escuro: #E55A0F;
+    --preto: #0A0A0A;
+    --preto-suave: #141414;
+    --cinza-escuro: #1F1F1F;
+    --cinza-medio: #2A2A2A;
+    --cinza-claro: #888888;
+    --branco: #FFFFFF;
+    --branco-suave: #F5F5F5;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    background: var(--preto);
+    color: var(--branco);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ============================================
+     LAYOUT GERAL - MENU + ÁREA DE TELA
+     ============================================ */
+  .container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* MENU LATERAL (elevador do prédio) */
+  .menu {
+    width: 280px;
+    background: linear-gradient(180deg, #0A0A0A 0%, #141414 100%);
+    border-right: 2px solid var(--laranja);
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .menu-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .menu-logo .dig { color: var(--branco); }
+  .menu-logo .vue { color: var(--laranja); }
+
+  .menu-subtitle {
+    text-align: center;
+    color: var(--cinza-claro);
+    font-size: 12px;
+    margin-bottom: 28px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .menu-section-title {
+    color: var(--laranja);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 16px 8px 12px 8px;
+  }
+
+  .menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    color: var(--branco);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    margin-bottom: 4px;
+    transition: all 0.25s ease;
+  }
+
+  .menu-btn:hover {
+    background: var(--cinza-escuro);
+    transform: translateX(4px);
+  }
+
+  .menu-btn.active {
+    background: linear-gradient(90deg, var(--laranja) 0%, var(--laranja-escuro) 100%);
+    color: var(--branco);
+    box-shadow: 0 4px 16px rgba(255, 107, 26, 0.3);
+  }
+
+  .menu-btn .icon {
+    font-size: 22px;
+    width: 28px;
+    text-align: center;
+  }
+
+  /* ÁREA DA TELA (onde aparece cada tela) */
+  .palco {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(255, 107, 26, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 100%, rgba(255, 107, 26, 0.05) 0%, transparent 50%),
+      var(--preto);
+  }
+
+  .palco-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--cinza-escuro);
+  }
+
+  .palco-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--branco);
+    margin-bottom: 4px;
+  }
+
+  .palco-header p {
+    color: var(--cinza-claro);
+    font-size: 15px;
+  }
+
+  /* CONTAINER QUE SEGURA AS TELAS */
+  .telas-wrapper {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .tela {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .tela.active {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================
+     CELULAR (formato em pé)
+     ============================================ */
+  .celular {
+    width: 360px;
+    height: 740px;
+    background: var(--preto-suave);
+    border-radius: 40px;
+    border: 8px solid #1a1a1a;
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.6),
+      0 0 0 2px var(--cinza-medio),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .celular::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 24px;
+    background: #000;
+    border-radius: 14px;
+    z-index: 100;
+  }
+
+  .celular-label {
+    text-align: center;
+    color: var(--laranja);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .celular-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Barra de status (relógio do celular) */
+  .status-bar {
+    height: 44px;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--branco);
+    flex-shrink: 0;
+  }
+
+  .status-bar .horario { font-size: 16px; }
+  .status-bar .icones { display: flex; gap: 6px; font-size: 13px; }
+
+  /* Conteúdo da tela do celular */
+  .celular-conteudo {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .celular-conteudo::-webkit-scrollbar { width: 0; }
+
+  /* Barra de navegação inferior */
+  .nav-inferior {
+    height: 70px;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--cinza-escuro);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--cinza-claro);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .nav-item.ativo { color: var(--laranja); }
+  .nav-item .nav-icon { font-size: 22px; }
+
+  /* ============================================
+     COMPUTADOR (telona)
+     ============================================ */
+  .desktop {
+    width: 100%;
+    max-width: 1100px;
+    background: var(--preto-suave);
+    border-radius: 16px;
+    border: 1px solid var(--cinza-medio);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+  }
+
+  .desktop-label {
+    text-align: center;
+    color: var(--laranja);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .desktop-wrapper {
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  .desktop-barra {
+    height: 36px;
+    background: var(--cinza-escuro);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .desktop-barra .ponto {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .desktop-barra .ponto.vermelho { background: #FF5F57; }
+  .desktop-barra .ponto.amarelo { background: #FEBC2E; }
+  .desktop-barra .ponto.verde { background: #28C840; }
+
+  /* ============================================
+     ESTILOS COMPARTILHADOS DAS TELAS
+     ============================================ */
+
+  /* === TELA SPLASH === */
+  .splash {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 107, 26, 0.2) 0%, transparent 60%),
+      var(--preto);
+  }
+
+  .splash-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    letter-spacing: 3px;
+    line-height: 1;
+    margin-bottom: 16px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .splash-logo .dig { color: var(--branco); }
+  .splash-logo .vue { color: var(--laranja); }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .splash-tagline {
+    color: var(--cinza-claro);
+    font-size: 16px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+  }
+
+  .splash-loading {
+    width: 200px;
+    height: 4px;
+    background: var(--cinza-escuro);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .splash-loading-bar {
+    height: 100%;
+    width: 60%;
+    background: linear-gradient(90deg, var(--laranja-escuro), var(--laranja));
+    border-radius: 4px;
+    animation: loading 1.5s ease-in-out infinite;
+  }
+
+  @keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  /* === TELA LOGIN === */
+  .login {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .login-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    text-align: center;
+    margin: 40px 0 8px 0;
+    letter-spacing: 2px;
+  }
+
+  .login-logo .dig { color: var(--branco); }
+  .login-logo .vue { color: var(--laranja); }
+
+  .login-titulo {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .login-subtitulo {
+    text-align: center;
+    color: var(--cinza-claro);
+    font-size: 15px;
+    margin-bottom: 40px;
+  }
+
+  .input-grupo {
+    margin-bottom: 16px;
+  }
+
+  .input-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cinza-claro);
+    margin-bottom: 8px;
+  }
+
+  .input-campo {
+    width: 100%;
+    padding: 16px;
+    background: var(--cinza-escuro);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: var(--branco);
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  .input-campo:focus {
+    outline: none;
+    border-color: var(--laranja);
+  }
+
+  .botao-laranja {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(90deg, var(--laranja-escuro), var(--laranja));
+    border: none;
+    border-radius: 12px;
+    color: var(--branco);
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    box-shadow: 0 8px 24px rgba(255, 107, 26, 0.3);
+    transition: transform 0.2s;
+    font-family: inherit;
+  }
+
+  .botao-laranja:hover { transform: translateY(-2px); }
+
+  .login-divisor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    color: var(--cinza-claro);
+    font-size: 13px;
+  }
+
+  .login-divisor::before,
+  .login-divisor::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--cinza-escuro);
+  }
+
+  .botoes-sociais {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .botao-social {
+    flex: 1;
+    padding: 14px;
+    background: var(--cinza-escuro);
+    border: 1px solid var(--cinza-medio);
+    border-radius: 12px;
+    color: var(--branco);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+  }
+
+  .login-rodape {
+    text-align: center;
+    color: var(--cinza-claro);
+    font-size: 14px;
+    margin-top: auto;
+    padding-bottom: 16px;
+  }
+
+  .login-rodape a {
+    color: var(--laranja);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* === TELA HOME === */
+  .home-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--preto);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .home-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1.5px;
+  }
+
+  .home-logo .dig { color: var(--branco); }
+  .home-logo .vue { color: var(--laranja); }
+
+  .home-acoes {
+    display: flex;
+    gap: 12px;
+    font-size: 22px;
+  }
+
+  .home-acoes span {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background: var(--cinza-escuro);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Banner principal */
+  .banner-principal {
+    margin: 0 16px 24px 16px;
+    height: 220px;
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, transparent 30%, rgba(0, 0, 0, 0.95) 100%),
+      linear-gradient(135deg, #4a1a0a 0%, #8b2f0e 50%, #d44a14 100%);
+    position: relative;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  .banner-tag {
+    align-self: flex-start;
+    padding: 4px 10px;
+    background: var(--laranja);
+    color: var(--branco);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .banner-titulo {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    line-height: 1.1;
+  }
+
+  .banner-info {
+    color: var(--cinza-claro);
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .banner-botoes {
+    display: flex;
+    gap: 8px;
+  }
+
+  .botao-play {
+    flex: 1;
+    padding: 10px;
+    background: var(--branco);
+    color: var(--preto);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .botao-add {
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--branco);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* Seção de categorias */
+  .secao {
+    margin-bottom: 24px;
+  }
+
+  .secao-header {
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .secao-titulo {
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .secao-link {
+    color: var(--laranja);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .lista-horizontal {
+    display: flex;
+    gap: 12px;
+    padding: 0 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .lista-horizontal::-webkit-scrollbar { display: none; }
+
+  .card-drama {
+    flex-shrink: 0;
+    width: 130px;
+    cursor: pointer;
+  }
+
+  .card-drama-imagem {
+    width: 130px;
+    height: 180px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-drama-imagem.cor1 { background: linear-gradient(135deg, #ff6b1a, #8b2f0e); }
+  .card-drama-imagem.cor2 { background: linear-gradient(135deg, #1a3a8b, #0a1a4a); }
+  .card-drama-imagem.cor3 { background: linear-gradient(135deg, #4a1a8b, #1a0a4a); }
+  .card-drama-imagem.cor4 { background: linear-gradient(135deg, #8b1a3a, #4a0a1a); }
+  .card-drama-imagem.cor5 { background: linear-gradient(135deg, #1a8b4a, #0a4a1a); }
+
+  .card-drama-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 3px 8px;
+    background: var(--laranja);
+    color: var(--branco);
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .card-drama-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card-drama-info {
+    color: var(--cinza-claro);
+    font-size: 12px;
+  }
+
+  /* Categorias chips */
+  .chips {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px 8px 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .chips::-webkit-scrollbar { display: none; }
+
+  .chip {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: var(--cinza-escuro);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .chip.ativo {
+    background: var(--laranja);
+    color: var(--branco);
+  }
+
+  /* === TELA PLAYER === */
+  .player {
+    position: relative;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .player-video {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(255, 107, 26, 0.2) 0%, transparent 50%),
+      linear-gradient(180deg, #2a1a0a 0%, #1a0a0a 100%);
+  }
+
+  .player-video::before {
+    content: '▶';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 107, 26, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: var(--branco);
+    box-shadow: 0 8px 24px rgba(255, 107, 26, 0.5);
+  }
+
+  .player-overlay-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.7), transparent);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .player-voltar {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .player-info-titulo {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .player-info-episodio {
+    font-size: 11px;
+    color: var(--cinza-claro);
+  }
+
+  .player-acoes-direita {
+    position: absolute;
+    right: 12px;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 10;
+  }
+
+  .player-acao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .player-acao-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .player-acao-num {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .player-info-baixo {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 80px;
+    z-index: 10;
+  }
+
+  .player-titulo-grande {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .player-descricao {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .player-progresso {
+    position: absolute;
+    bottom: 12px;
+    left: 20px;
+    right: 20px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  .player-progresso-barra {
+    height: 100%;
+    width: 45%;
+    background: var(--laranja);
+  }
+
+  /* Cadeado para episódio bloqueado */
+  .player-bloqueado {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    padding: 32px;
+    text-align: center;
+  }
+
+  .player-bloqueado.show { display: flex; }
+
+  .cadeado-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+  }
+
+  .cadeado-titulo {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .cadeado-texto {
+    color: var(--cinza-claro);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .cadeado-opcoes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .cadeado-opcao {
+    padding: 14px;
+    background: var(--cinza-escuro);
+    border-radius: 12px;
+    border: 1px solid var(--cinza-medio);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .cadeado-opcao.principal {
+    background: var(--laranja);
+    border-color: var(--laranja);
+  }
+
+  /* === TELA BUSCA === */
+  .busca-header {
+    padding: 16px 20px;
+    background: var(--preto);
+  }
+
+  .busca-titulo {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+
+  .busca-input-wrapper {
+    position: relative;
+  }
+
+  .busca-input {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    background: var(--cinza-escuro);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: var(--branco);
+    font-size: 15px;
+    font-family: inherit;
+  }
+
+  .busca-input:focus {
+    outline: none;
+    border-color: var(--laranja);
+  }
+
+  .busca-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--cinza-claro);
+    font-size: 18px;
+  }
+
+  .busca-secao-titulo {
+    padding: 20px 20px 12px 20px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .busca-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 20px;
+  }
+
+  .busca-tag {
+    padding: 8px 14px;
+    background: var(--cinza-escuro);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .busca-tag.popular {
+    background: linear-gradient(90deg, var(--laranja-escuro), var(--laranja));
+  }
+
+  /* Grade de tendências */
+  .grade-tendencias {
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .tendencia-card {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: var(--cinza-escuro);
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .tendencia-numero {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--laranja);
+    line-height: 1;
+    width: 30px;
+  }
+
+  .tendencia-info {
+    flex: 1;
+  }
+
+  .tendencia-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .tendencia-categoria {
+    font-size: 11px;
+    color: var(--cinza-claro);
+  }
+
+  /* === TELA CARTEIRA === */
+  .carteira-header {
+    padding: 20px;
+  }
+
+  .carteira-titulo {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .carteira-saldo-card {
+    margin: 0 20px 24px 20px;
+    background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-escuro) 100%);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 12px 32px rgba(255, 107, 26, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .carteira-saldo-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+  .carteira-saldo-label {
+    font-size: 13px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .carteira-saldo-valor {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .carteira-saldo-moeda {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .pacotes-titulo {
+    padding: 0 20px 12px 20px;
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .pacotes-grade {
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .pacote-card {
+    background: var(--cinza-escuro);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .pacote-card.popular {
+    border-color: var(--laranja);
+  }
+
+  .pacote-card.popular::before {
+    content: 'POPULAR';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--laranja);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  .pacote-moedas {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--laranja);
+    line-height: 1;
+    margin: 8px 0 4px 0;
+  }
+
+  .pacote-bonus {
+    font-size: 11px;
+    color: var(--cinza-claro);
+    margin-bottom: 12px;
+  }
+
+  .pacote-preco {
+    background: var(--preto);
+    padding: 8px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .historico-titulo {
+    padding: 24px 20px 12px 20px;
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .historico-item {
+    margin: 0 20px 8px 20px;
+    padding: 14px;
+    background: var(--cinza-escuro);
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .historico-info {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .historico-data {
+    font-size: 11px;
+    color: var(--cinza-claro);
+    margin-top: 2px;
+  }
+
+  .historico-valor.positivo { color: #4ade80; font-weight: 700; }
+  .historico-valor.negativo { color: #f87171; font-weight: 700; }
+
+  /* === TELA VIP === */
+  .vip {
+    padding: 20px;
+  }
+
+  .vip-coroa {
+    text-align: center;
+    font-size: 64px;
+    margin: 16px 0 12px 0;
+  }
+
+  .vip-titulo-grande {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    letter-spacing: 2px;
+    color: var(--laranja);
+    margin-bottom: 4px;
+  }
+
+  .vip-subtitulo {
+    text-align: center;
+    color: var(--cinza-claro);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .vip-beneficios {
+    background: var(--cinza-escuro);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .vip-beneficio {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .vip-check {
+    width: 24px;
+    height: 24px;
+    background: var(--laranja);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .vip-beneficio-texto {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .vip-planos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .vip-plano {
+    background: var(--cinza-escuro);
+    border: 2px solid var(--cinza-medio);
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .vip-plano.selecionado {
+    border-color: var(--laranja);
+    background: linear-gradient(135deg, rgba(255,107,26,0.1) 0%, var(--cinza-escuro) 100%);
+  }
+
+  .vip-plano-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .vip-plano-nome {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .vip-plano-economia {
+    font-size: 11px;
+    color: var(--laranja);
+    margin-top: 2px;
+  }
+
+  .vip-plano-preco {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--laranja);
+    line-height: 1;
+  }
+
+  .vip-plano-periodo {
+    font-size: 11px;
+    color: var(--cinza-claro);
+  }
+
+  /* === TELA PERFIL === */
+  .perfil-header {
+    padding: 32px 20px 24px 20px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(255, 107, 26, 0.15) 0%, transparent 100%);
+  }
+
+  .perfil-foto {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--laranja), var(--laranja-escuro));
+    margin: 0 auto 12px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    border: 3px solid var(--laranja);
+    box-shadow: 0 8px 20px rgba(255, 107, 26, 0.3);
+  }
+
+  .perfil-nome {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .perfil-email {
+    font-size: 13px;
+    color: var(--cinza-claro);
+    margin-bottom: 12px;
+  }
+
+  .perfil-vip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: linear-gradient(90deg, var(--laranja), var(--laranja-escuro));
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  .perfil-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+
+  .perfil-stat {
+    background: var(--cinza-escuro);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .perfil-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--laranja);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .perfil-stat-label {
+    font-size: 11px;
+    color: var(--cinza-claro);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .perfil-menu {
+    padding: 0 20px;
+  }
+
+  .perfil-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: var(--cinza-escuro);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  .perfil-item-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--preto);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .perfil-item-texto {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .perfil-item-seta {
+    color: var(--cinza-claro);
+    font-size: 18px;
+  }
+
+  /* === TELA DETALHES === */
+  .detalhes-banner {
+    height: 240px;
+    background:
+      linear-gradient(180deg, transparent 50%, var(--preto-suave) 100%),
+      linear-gradient(135deg, #4a1a0a 0%, #d44a14 100%);
+    position: relative;
+  }
+
+  .detalhes-voltar {
+    position: absolute;
+    top: 50px;
+    left: 16px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 5;
+  }
+
+  .detalhes-conteudo {
+    padding: 20px;
+    margin-top: -40px;
+    position: relative;
+  }
+
+  .detalhes-titulo {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .detalhes-meta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--cinza-claro);
+  }
+
+  .detalhes-meta-item {
+    padding: 3px 8px;
+    background: var(--cinza-escuro);
+    border-radius: 4px;
+  }
+
+  .detalhes-rating {
+    color: var(--laranja);
+    font-weight: 700;
+  }
+
+  .detalhes-descricao {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .detalhes-botoes {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .detalhes-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid var(--cinza-escuro);
+    margin-bottom: 16px;
+  }
+
+  .detalhes-tab {
+    padding: 10px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cinza-claro);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+  }
+
+  .detalhes-tab.ativo {
+    color: var(--laranja);
+    border-bottom-color: var(--laranja);
+  }
+
+  .episodio-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--cinza-escuro);
+    cursor: pointer;
+  }
+
+  .episodio-thumb {
+    width: 100px;
+    height: 60px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #ff6b1a, #4a1a0a);
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .episodio-thumb-icon {
+    font-size: 22px;
+    opacity: 0.9;
+  }
+
+  .episodio-info {
+    flex: 1;
+  }
+
+  .episodio-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .episodio-duracao {
+    font-size: 12px;
+    color: var(--cinza-claro);
+  }
+
+  .episodio-cadeado {
+    color: var(--laranja);
+    font-size: 16px;
+    align-self: center;
+  }
+
+  /* ============================================
+     ESTILOS PARA DESKTOP (telona)
+     ============================================ */
+  .desktop-conteudo {
+    display: flex;
+    min-height: 600px;
+  }
+
+  .desktop-sidebar {
+    width: 220px;
+    background: var(--preto);
+    border-right: 1px solid var(--cinza-escuro);
+    padding: 20px 12px;
+    flex-shrink: 0;
+  }
+
+  .desktop-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: 1.5px;
+  }
+
+  .desktop-logo .dig { color: var(--branco); }
+  .desktop-logo .vue { color: var(--laranja); }
+
+  .desktop-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--cinza-claro);
+  }
+
+  .desktop-nav-item.ativo {
+    background: linear-gradient(90deg, var(--laranja), var(--laranja-escuro));
+    color: var(--branco);
+  }
+
+  .desktop-nav-item .icon { font-size: 18px; }
+
+  .desktop-main {
+    flex: 1;
+    padding: 24px 32px;
+    background: var(--preto-suave);
+    overflow: hidden;
+  }
+
+  .desktop-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .desktop-busca {
+    width: 320px;
+    padding: 10px 14px 10px 38px;
+    background: var(--cinza-escuro);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--branco);
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .desktop-busca:focus {
+    outline: none;
+    border-color: var(--laranja);
+  }
+
+  .desktop-busca-wrapper {
+    position: relative;
+  }
+
+  .desktop-busca-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--cinza-claro);
+  }
+
+  .desktop-perfil {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .desktop-perfil-foto {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--laranja), var(--laranja-escuro));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .desktop-banner {
+    height: 280px;
+    border-radius: 16px;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,0.8) 0%, transparent 60%),
+      linear-gradient(135deg, #4a1a0a 0%, #8b2f0e 50%, #d44a14 100%);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 28px;
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .desktop-banner-tag {
+    align-self: flex-start;
+    padding: 4px 10px;
+    background: var(--laranja);
+    color: var(--branco);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .desktop-banner-titulo {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    max-width: 60%;
+  }
+
+  .desktop-banner-info {
+    color: var(--cinza-claro);
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .desktop-banner-botoes {
+    display: flex;
+    gap: 10px;
+  }
+
+  .desktop-secao-titulo {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+
+  .desktop-grade {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+
+  .desktop-card {
+    cursor: pointer;
+  }
+
+  .desktop-card-img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .desktop-card-img.cor1 { background: linear-gradient(135deg, #ff6b1a, #8b2f0e); }
+  .desktop-card-img.cor2 { background: linear-gradient(135deg, #1a3a8b, #0a1a4a); }
+  .desktop-card-img.cor3 { background: linear-gradient(135deg, #4a1a8b, #1a0a4a); }
+  .desktop-card-img.cor4 { background: linear-gradient(135deg, #8b1a3a, #4a0a1a); }
+  .desktop-card-img.cor5 { background: linear-gradient(135deg, #1a8b4a, #0a4a1a); }
+
+  .desktop-card-titulo {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .desktop-card-info {
+    font-size: 12px;
+    color: var(--cinza-claro);
+  }
+
+  /* === DESKTOP PLAYER === */
+  .desktop-player {
+    padding: 24px;
+  }
+
+  .desktop-player-tela {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 107, 26, 0.2) 0%, transparent 50%),
+      #000;
+    border-radius: 12px;
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .desktop-player-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 107, 26, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 8px 24px rgba(255, 107, 26, 0.5);
+  }
+
+  .desktop-player-controles {
+    position: absolute;
+    bottom: 12px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .desktop-player-progresso {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .desktop-player-progresso-barra {
+    height: 100%;
+    width: 35%;
+    background: var(--laranja);
+  }
+
+  .desktop-player-info {
+    display: flex;
+    gap: 24px;
+  }
+
+  .desktop-player-detalhes {
+    flex: 2;
+  }
+
+  .desktop-player-episodios {
+    flex: 1;
+    background: var(--cinza-escuro);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  /* === DESKTOP DETALHES === */
+  .desktop-detalhes-hero {
+    height: 360px;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 100%),
+      linear-gradient(135deg, #4a1a0a 0%, #d44a14 100%);
+    padding: 40px;
+    display: flex;
+    align-items: flex-end;
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+
+  .desktop-detalhes-info {
+    max-width: 60%;
+  }
+
+  .desktop-detalhes-titulo {
+    font-size: 44px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+
+  .desktop-detalhes-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--cinza-claro);
+  }
+
+  .desktop-detalhes-descricao {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-width: 600px;
+  }
+
+  .desktop-detalhes-botoes {
+    display: flex;
+    gap: 12px;
+  }
+
+  .desktop-episodios-grade {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .desktop-ep-card {
+    background: var(--cinza-escuro);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .desktop-ep-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #ff6b1a, #4a1a0a);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+
+  .desktop-ep-info {
+    padding: 12px;
+  }
+
+  .desktop-ep-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .desktop-ep-duracao {
+    font-size: 12px;
+    color: var(--cinza-claro);
+  }
+
+  /* ============================================
+     RESPONSIVO (celular)
+     ============================================ */
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+    }
+
+    .menu {
+      width: 100%;
+      height: auto;
+      position: static;
+      border-right: none;
+      border-bottom: 2px solid var(--laranja);
+      padding: 16px;
+    }
+
+    .menu-logo { font-size: 30px; }
+
+    .palco {
+      padding: 16px;
+    }
+
+    .telas-wrapper { gap: 24px; }
+
+    .desktop-wrapper { display: none; }
+
+    .palco-header h1 { font-size: 22px; }
+  }
+
+  /* Scrollbar bonita */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--preto); }
+  ::-webkit-scrollbar-thumb { background: var(--cinza-medio); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--laranja); }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ============================================
+       MENU LATERAL (elevador do prédio)
+       ============================================ -->
+  <aside class="menu">
+    <div class="menu-logo">
+      <span class="dig">Dig</span><span class="vue">Vue</span>
+    </div>
+    <div class="menu-subtitle">Layout Padrão</div>
+
+    <div class="menu-section-title">📱 Telas</div>
+    <button class="menu-btn active" onclick="mostrar('splash', this)">
+      <span class="icon">🚪</span> Splash
+    </button>
+    <button class="menu-btn" onclick="mostrar('login', this)">
+      <span class="icon">🔐</span> Login
+    </button>
+    <button class="menu-btn" onclick="mostrar('home', this)">
+      <span class="icon">🏠</span> Home
+    </button>
+    <button class="menu-btn" onclick="mostrar('player', this)">
+      <span class="icon">🎬</span> Player
+    </button>
+    <button class="menu-btn" onclick="mostrar('detalhes', this)">
+      <span class="icon">📺</span> Detalhes
+    </button>
+    <button class="menu-btn" onclick="mostrar('busca', this)">
+      <span class="icon">🔍</span> Busca
+    </button>
+    <button class="menu-btn" onclick="mostrar('carteira', this)">
+      <span class="icon">🪙</span> Carteira
+    </button>
+    <button class="menu-btn" onclick="mostrar('vip', this)">
+      <span class="icon">💎</span> VIP
+    </button>
+    <button class="menu-btn" onclick="mostrar('perfil', this)">
+      <span class="icon">👤</span> Perfil
+    </button>
+  </aside>
+
+  <!-- ============================================
+       PALCO (onde a tela aparece)
+       ============================================ -->
+  <main class="palco">
+
+    <!-- ====================================================
+         TELA 1: SPLASH
+         ==================================================== -->
+    <div id="tela-splash" class="tela active">
+      <div class="palco-header" style="width:100%;">
+        <h1>🚪 Tela de Splash</h1>
+        <p>A "porta de entrada" do app — primeira coisa que aparece quando o usuário abre o DigVue.</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <!-- CELULAR -->
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular</div>
+          <div class="celular">
+            <div class="status-bar">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo">
+              <div class="splash">
+                <div class="splash-logo">
+                  <span class="dig">Dig</span><span class="vue">Vue</span>
+                </div>
+                <div class="splash-tagline">Mini Dramas</div>
+                <div class="splash-loading">
+                  <div class="splash-loading-bar"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DESKTOP -->
+        <div class="desktop-wrapper">
+          <div class="desktop-label">💻 Computador</div>
+          <div class="desktop">
+            <div class="desktop-barra">
+              <div class="ponto vermelho"></div>
+              <div class="ponto amarelo"></div>
+              <div class="ponto verde"></div>
+            </div>
+            <div style="height: 600px;">
+              <div class="splash">
+                <div class="splash-logo" style="font-size: 120px;">
+                  <span class="dig">Dig</span><span class="vue">Vue</span>
+                </div>
+                <div class="splash-tagline" style="font-size: 20px;">Mini Dramas Premium</div>
+                <div class="splash-loading">
+                  <div class="splash-loading-bar"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         TELA 2: LOGIN
+         ==================================================== -->
+    <div id="tela-login" class="tela">
+      <div class="palco-header" style="width:100%;">
+        <h1>🔐 Tela de Login / Cadastro</h1>
+        <p>Onde o usuário entra com email e senha, ou cria uma conta nova.</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular</div>
+          <div class="celular">
+            <div class="status-bar">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo">
+              <div class="login">
+                <div class="login-logo">
+                  <span class="dig">Dig</span><span class="vue">Vue</span>
+                </div>
+                <h2 class="login-titulo">Bem-vindo!</h2>
+                <p class="login-subtitulo">Entre para assistir</p>
+
+                <div class="input-grupo">
+                  <label class="input-label">Email</label>
+                  <input type="email" class="input-campo" placeholder="seu@email.com">
+                </div>
+
+                <div class="input-grupo">
+                  <label class="input-label">Senha</label>
+                  <input type="password" class="input-campo" placeholder="••••••••">
+                </div>
+
+                <button class="botao-laranja">Entrar</button>
+
+                <div class="login-divisor">ou continue com</div>
+
+                <div class="botoes-sociais">
+                  <button class="botao-social">G</button>
+                  <button class="botao-social">f</button>
+                  <button class="botao-social">🍎</button>
+                </div>
+
+                <div class="login-rodape">
+                  Não tem conta? <a href="#">Cadastre-se</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="desktop-wrapper">
+          <div class="desktop-label">💻 Computador</div>
+          <div class="desktop">
+            <div class="desktop-barra">
+              <div class="ponto vermelho"></div>
+              <div class="ponto amarelo"></div>
+              <div class="ponto verde"></div>
+            </div>
+            <div style="display: flex; min-height: 600px;">
+              <div style="flex: 1; background: linear-gradient(135deg, #4a1a0a 0%, #8b2f0e 50%, #d44a14 100%); padding: 60px; display: flex; flex-direction: column; justify-content: center;">
+                <div style="font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 2px; line-height: 1; margin-bottom: 16px;">
+                  <span style="color: white;">Dig</span><span style="color: var(--branco); text-shadow: 0 0 20px rgba(0,0,0,0.5);">Vue</span>
+                </div>
+                <p style="font-size: 20px; line-height: 1.5; opacity: 0.95;">Histórias curtinhas. Emoções gigantes.</p>
+                <p style="font-size: 14px; opacity: 0.8; margin-top: 12px;">Mais de 10.000 episódios para você assistir.</p>
+              </div>
+              <div style="flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: center; max-width: 480px;">
+                <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">Bem-vindo de volta!</h2>
+                <p style="color: var(--cinza-claro); margin-bottom: 32px;">Entre para continuar assistindo</p>
+
+                <div class="input-grupo">
+                  <label class="input-label">Email</label>
+                  <input type="email" class="input-campo" placeholder="seu@email.com">
+                </div>
+                <div class="input-grupo">
+                  <label class="input-label">Senha</label>
+                  <input type="password" class="input-campo" placeholder="••••••••">
+                </div>
+                <button class="botao-laranja">Entrar</button>
+                <div class="login-divisor">ou</div>
+                <div class="botoes-sociais">
+                  <button class="botao-social">Google</button>
+                  <button class="botao-social">Facebook</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         TELA 3: HOME
+         ==================================================== -->
+    <div id="tela-home" class="tela">
+      <div class="palco-header" style="width:100%;">
+        <h1>🏠 Tela Home</h1>
+        <p>Tela principal com banner, categorias e listas de dramas para o usuário escolher.</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular</div>
+          <div class="celular">
+            <div class="status-bar">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo">
+              <div class="home-header">
+                <div class="home-logo">
+                  <span class="dig">Dig</span><span class="vue">Vue</span>
+                </div>
+                <div class="home-acoes">
+                  <span>🔔</span>
+                  <span>🔍</span>
+                </div>
+              </div>
+
+              <div class="chips">
+                <div class="chip ativo">Tudo</div>
+                <div class="chip">Romance</div>
+                <div class="chip">Drama</div>
+                <div class="chip">Comédia</div>
+                <div class="chip">Suspense</div>
+                <div class="chip">Família</div>
+              </div>
+
+              <div class="banner-principal">
+                <span class="banner-tag">⭐ Em Alta</span>
+                <h2 class="banner-titulo">O Amor Secreto<br>do CEO</h2>
+                <p class="banner-info">42 episódios • Romance</p>
+                <div class="banner-botoes">
+                  <button class="botao-play">▶ Assistir</button>
+                  <button class="botao-add">+ Lista</button>
+                </div>
+              </div>
+
+              <div class="secao">
+                <div class="secao-header">
+                  <h3 class="secao-titulo">🔥 Em Alta</h3>
+                  <span class="secao-link">Ver tudo</span>
+                </div>
+                <div class="lista-horizontal">
+                  <div class="card-drama">
+                    <div class="card-drama-imagem cor1" style="background-image:url('assets/thumbnails/romance_1.jpg'); background-size:cover; background-position:center top;">
+                      <span class="card-drama-badge">NOVO</span>
+                    </div>
+                    <div class="card-drama-titulo">Casamento Falso</div>
+                    <div class="card-drama-info">⭐ 4.8 • 32 eps</div>
+                  </div>
+                  <div class="card-drama">
+                    <div class="card-drama-imagem cor2" style="background-image:url('assets/thumbnails/suspense_1.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="card-drama-titulo">Vingança Doce</div>
+                    <div class="card-drama-info">⭐ 4.6 • 28 eps</div>
+                  </div>
+                  <div class="card-drama">
+                    <div class="card-drama-imagem cor3" style="background-image:url('assets/thumbnails/drama_1.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="card-drama-titulo">Lobo Alfa</div>
+                    <div class="card-drama-info">⭐ 4.9 • 50 eps</div>
+                  </div>
+                  <div class="card-drama">
+                    <div class="card-drama-imagem cor4" style="background-image:url('assets/thumbnails/familia_1.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="card-drama-titulo">Filha Perdida</div>
+                    <div class="card-drama-info">⭐ 4.7 • 40 eps</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="secao">
+                <div class="secao-header">
+                  <h3 class="secao-titulo">💝 Romance</h3>
+                  <span class="secao-link">Ver tudo</span>
+                </div>
+                <div class="lista-horizontal">
+                  <div class="card-drama">
+                    <div class="card-drama-imagem cor5" style="background-image:url('assets/thumbnails/romance_3.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="card-drama-titulo">Para Sempre</div>
+                    <div class="card-drama-info">⭐ 4.5 • 25 eps</div>
+                  </div>
+                  <div class="card-drama">
+                    <div class="card-drama-imagem cor1" style="background-image:url('assets/thumbnails/romance_2.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="card-drama-titulo">Coração de Gelo</div>
+                    <div class="card-drama-info">⭐ 4.8 • 38 eps</div>
+                  </div>
+                  <div class="card-drama">
+                    <div class="card-drama-imagem cor2" style="background-image:url('assets/thumbnails/drama_2.jpg'); background-size:cover; background-position:center top;">
+                      <span class="card-drama-badge">VIP</span>
+                    </div>
+                    <div class="card-drama-titulo">Príncipe Real</div>
+                    <div class="card-drama-info">⭐ 4.9 • 45 eps</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="nav-inferior">
+              <div class="nav-item ativo">
+                <div class="nav-icon">🏠</div>
+                <span>Início</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">🔍</div>
+                <span>Buscar</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">🪙</div>
+                <span>Carteira</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <span>Perfil</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="desktop-wrapper">
+          <div class="desktop-label">💻 Computador</div>
+          <div class="desktop">
+            <div class="desktop-barra">
+              <div class="ponto vermelho"></div>
+              <div class="ponto amarelo"></div>
+              <div class="ponto verde"></div>
+            </div>
+            <div class="desktop-conteudo">
+              <aside class="desktop-sidebar">
+                <div class="desktop-logo">
+                  <span class="dig">Dig</span><span class="vue">Vue</span>
+                </div>
+                <div class="desktop-nav-item ativo"><span class="icon">🏠</span> Início</div>
+                <div class="desktop-nav-item"><span class="icon">🔥</span> Em Alta</div>
+                <div class="desktop-nav-item"><span class="icon">💝</span> Romance</div>
+                <div class="desktop-nav-item"><span class="icon">🎭</span> Drama</div>
+                <div class="desktop-nav-item"><span class="icon">😂</span> Comédia</div>
+                <div class="desktop-nav-item"><span class="icon">🪙</span> Carteira</div>
+                <div class="desktop-nav-item"><span class="icon">💎</span> VIP</div>
+                <div class="desktop-nav-item"><span class="icon">⚙️</span> Ajustes</div>
+              </aside>
+              <main class="desktop-main">
+                <div class="desktop-topo">
+                  <div class="desktop-busca-wrapper">
+                    <span class="desktop-busca-icon">🔍</span>
+                    <input class="desktop-busca" placeholder="Buscar dramas, séries...">
+                  </div>
+                  <div class="desktop-perfil">
+                    <span style="font-size: 20px;">🔔</span>
+                    <div class="desktop-perfil-foto">M</div>
+                  </div>
+                </div>
+
+                <div class="desktop-banner">
+                  <span class="desktop-banner-tag">⭐ Em Alta</span>
+                  <h2 class="desktop-banner-titulo">O Amor Secreto do CEO</h2>
+                  <p class="desktop-banner-info">42 episódios • Romance • ⭐ 4.9</p>
+                  <div class="desktop-banner-botoes">
+                    <button class="botao-play">▶ Assistir Agora</button>
+                    <button class="botao-add">+ Minha Lista</button>
+                  </div>
+                </div>
+
+                <h3 class="desktop-secao-titulo">🔥 Em Alta</h3>
+                <div class="desktop-grade">
+                  <div class="desktop-card">
+                    <div class="desktop-card-img cor1" style="background-image:url('assets/thumbnails/romance_1.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="desktop-card-titulo">Casamento Falso</div>
+                    <div class="desktop-card-info">⭐ 4.8 • 32 eps</div>
+                  </div>
+                  <div class="desktop-card">
+                    <div class="desktop-card-img cor2" style="background-image:url('assets/thumbnails/suspense_1.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="desktop-card-titulo">Vingança Doce</div>
+                    <div class="desktop-card-info">⭐ 4.6 • 28 eps</div>
+                  </div>
+                  <div class="desktop-card">
+                    <div class="desktop-card-img cor3" style="background-image:url('assets/thumbnails/drama_1.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="desktop-card-titulo">Lobo Alfa</div>
+                    <div class="desktop-card-info">⭐ 4.9 • 50 eps</div>
+                  </div>
+                  <div class="desktop-card">
+                    <div class="desktop-card-img cor4" style="background-image:url('assets/thumbnails/familia_1.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="desktop-card-titulo">Filha Perdida</div>
+                    <div class="desktop-card-info">⭐ 4.7 • 40 eps</div>
+                  </div>
+                  <div class="desktop-card">
+                    <div class="desktop-card-img cor5" style="background-image:url('assets/thumbnails/romance_3.jpg'); background-size:cover; background-position:center top;"></div>
+                    <div class="desktop-card-titulo">Para Sempre</div>
+                    <div class="desktop-card-info">⭐ 4.5 • 25 eps</div>
+                  </div>
+                </div>
+              </main>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         TELA 4: PLAYER
+         ==================================================== -->
+    <div id="tela-player" class="tela">
+      <div class="palco-header" style="width:100%;">
+        <h1>🎬 Tela do Player</h1>
+        <p>Onde o usuário assiste o episódio (formato vertical estilo TikTok no celular).</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular - Assistindo</div>
+          <div class="celular">
+            <div class="status-bar" style="background: rgba(0,0,0,0.4); position: absolute; left:0; right:0; z-index: 50; color: white;">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo" style="position: relative;">
+              <div class="player">
+                <div class="player-video"></div>
+                <div class="player-overlay-top">
+                  <div class="player-voltar">←</div>
+                  <div class="player-info-titulo">
+                    Casamento Falso
+                    <div class="player-info-episodio">Episódio 5</div>
+                  </div>
+                  <div class="player-voltar">⋯</div>
+                </div>
+
+                <div class="player-acoes-direita">
+                  <div class="player-acao">
+                    <div class="player-acao-icon">❤️</div>
+                    <div class="player-acao-num">12.5K</div>
+                  </div>
+                  <div class="player-acao">
+                    <div class="player-acao-icon">💬</div>
+                    <div class="player-acao-num">348</div>
+                  </div>
+                  <div class="player-acao">
+                    <div class="player-acao-icon">📤</div>
+                    <div class="player-acao-num">Enviar</div>
+                  </div>
+                  <div class="player-acao">
+                    <div class="player-acao-icon">🔖</div>
+                    <div class="player-acao-num">Salvar</div>
+                  </div>
+                </div>
+
+                <div class="player-info-baixo">
+                  <h3 class="player-titulo-grande">Casamento Falso</h3>
+                  <p class="player-descricao">Ela aceitou casar por 1 milhão. Mas o coração não obedece contratos...</p>
+                </div>
+
+                <div class="player-progresso">
+                  <div class="player-progresso-barra"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular - Bloqueado</div>
+          <div class="celular">
+            <div class="status-bar" style="background: rgba(0,0,0,0.4); position: absolute; left:0; right:0; z-index: 50; color: white;">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo" style="position: relative;">
+              <div class="player">
+                <div class="player-video"></div>
+                <div class="player-overlay-top">
+                  <div class="player-voltar">←</div>
+                  <div class="player-info-titulo">
+                    Casamento Falso
+                    <div class="player-info-episodio">Episódio 8</div>
+                  </div>
+                  <div class="player-voltar">⋯</div>
+                </div>
+
+                <div class="player-bloqueado show">
+                  <div class="cadeado-icon">🔒</div>
+                  <h3 class="cadeado-titulo">Episódio Bloqueado</h3>
+                  <p class="cadeado-texto">Desbloqueie para continuar assistindo</p>
+
+                  <div class="cadeado-opcoes">
+                    <div class="cadeado-opcao principal">
+                      <span>🪙 Usar 50 moedas</span>
+                      <span>→</span>
+                    </div>
+                    <div class="cadeado-opcao">
+                      <span>📺 Assistir anúncio</span>
+                      <span>Grátis</span>
+                    </div>
+                    <div class="cadeado-opcao">
+                      <span>💎 Assinar VIP</span>
+                      <span>R$ 19,90</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="desktop-wrapper">
+          <div class="desktop-label">💻 Computador</div>
+          <div class="desktop">
+            <div class="desktop-barra">
+              <div class="ponto vermelho"></div>
+              <div class="ponto amarelo"></div>
+              <div class="ponto verde"></div>
+            </div>
+            <div class="desktop-player">
+              <div class="desktop-player-tela">
+                <div class="desktop-player-play">▶</div>
+                <div class="desktop-player-controles">
+                  <span style="font-size: 20px;">⏸</span>
+                  <span style="font-size: 13px;">12:34</span>
+                  <div class="desktop-player-progresso">
+                    <div class="desktop-player-progresso-barra"></div>
+                  </div>
+                  <span style="font-size: 13px;">35:00</span>
+                  <span style="font-size: 18px;">🔊</span>
+                  <span style="font-size: 18px;">⛶</span>
+                </div>
+              </div>
+
+              <div class="desktop-player-info">
+                <div class="desktop-player-detalhes">
+                  <h2 style="font-size: 26px; font-weight: 800; margin-bottom: 8px;">Casamento Falso - Episódio 5</h2>
+                  <div style="display: flex; gap: 16px; color: var(--cinza-claro); margin-bottom: 16px; font-size: 14px;">
+                    <span>⭐ 4.8</span>
+                    <span>👁 1.2M views</span>
+                    <span>📅 2026</span>
+                  </div>
+                  <p style="line-height: 1.6; color: rgba(255,255,255,0.85); margin-bottom: 20px;">
+                    Ela aceitou casar por 1 milhão de reais. Mas o coração não obedece contratos. Quando os sentimentos começam a aparecer, tudo muda...
+                  </p>
+                  <div style="display: flex; gap: 12px;">
+                    <button class="botao-play">❤️ Curtir</button>
+                    <button class="botao-add">📤 Compartilhar</button>
+                    <button class="botao-add">+ Lista</button>
+                  </div>
+                </div>
+
+                <div class="desktop-player-episodios">
+                  <h4 style="font-weight: 700; margin-bottom: 12px;">Próximos episódios</h4>
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; gap: 10px; padding: 8px; background: var(--preto-suave); border-radius: 8px; cursor:pointer;">
+                      <div style="width: 80px; height: 50px; border-radius: 6px; background: url('assets/thumbnails/romance_1.jpg') center/cover; "></div>
+                      <div style="flex: 1;">
+                        <div style="font-size: 13px; font-weight: 700;">Ep 6</div>
+                        <div style="font-size: 11px; color: var(--cinza-claro);">5 min</div>
+                      </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; padding: 8px; background: var(--preto-suave); border-radius: 8px; cursor:pointer;">
+                      <div style="width: 80px; height: 50px; border-radius: 6px; background: url('assets/thumbnails/drama_1.jpg') center/cover; "></div>
+                      <div style="flex: 1;">
+                        <div style="font-size: 13px; font-weight: 700;">Ep 7</div>
+                        <div style="font-size: 11px; color: var(--cinza-claro);">5 min</div>
+                      </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; padding: 8px; background: var(--preto-suave); border-radius: 8px; cursor:pointer; opacity: 0.6;">
+                      <div style="width: 80px; height: 50px; border-radius: 6px; background: linear-gradient(135deg, #4a1a8b, #1a0a4a); display: flex; align-items: center; justify-content: center; font-size: 18px;">🔒</div>
+                      <div style="flex: 1;">
+                        <div style="font-size: 13px; font-weight: 700;">Ep 8</div>
+                        <div style="font-size: 11px; color: var(--laranja);">50 moedas</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         TELA 5: DETALHES
+         ==================================================== -->
+    <div id="tela-detalhes" class="tela">
+      <div class="palco-header" style="width:100%;">
+        <h1>📺 Tela de Detalhes da Série</h1>
+        <p>Mostra todas as informações da série e a lista de episódios disponíveis.</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular</div>
+          <div class="celular">
+            <div class="status-bar" style="background: rgba(0,0,0,0.4); position: absolute; left:0; right:0; z-index: 50; color: white;">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo">
+              <div class="detalhes-banner">
+                <div class="detalhes-voltar">←</div>
+              </div>
+
+              <div class="detalhes-conteudo">
+                <h1 class="detalhes-titulo">Casamento Falso</h1>
+                <div class="detalhes-meta">
+                  <span class="detalhes-meta-item detalhes-rating">⭐ 4.8</span>
+                  <span class="detalhes-meta-item">2026</span>
+                  <span class="detalhes-meta-item">Romance</span>
+                  <span class="detalhes-meta-item">32 eps</span>
+                </div>
+                <p class="detalhes-descricao">
+                  Ela aceitou casar com o bilionário por 1 milhão de reais. Era apenas um contrato, sem amor, sem carinho. Mas quando o coração começa a falar mais alto que o dinheiro...
+                </p>
+
+                <div class="detalhes-botoes">
+                  <button class="botao-play" style="flex: 1;">▶ Episódio 1</button>
+                  <button class="botao-add">+ Lista</button>
+                  <button class="botao-add">📤</button>
+                </div>
+
+                <div class="detalhes-tabs">
+                  <div class="detalhes-tab ativo">Episódios</div>
+                  <div class="detalhes-tab">Comentários</div>
+                  <div class="detalhes-tab">Similares</div>
+                </div>
+
+                <div class="episodio-item">
+                  <div class="episodio-thumb">
+                    <span class="episodio-thumb-icon">▶</span>
+                  </div>
+                  <div class="episodio-info">
+                    <div class="episodio-titulo">Ep 1: O Acordo</div>
+                    <div class="episodio-duracao">5 min • Grátis</div>
+                  </div>
+                </div>
+                <div class="episodio-item">
+                  <div class="episodio-thumb" style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.5)), url('assets/thumbnails/romance_2.jpg'); background-size:cover; background-position:center;">
+                    <span class="episodio-thumb-icon">▶</span>
+                  </div>
+                  <div class="episodio-info">
+                    <div class="episodio-titulo">Ep 2: Primeira Noite</div>
+                    <div class="episodio-duracao">5 min • Grátis</div>
+                  </div>
+                </div>
+                <div class="episodio-item">
+                  <div class="episodio-thumb" style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.5)), url('assets/thumbnails/drama_1.jpg'); background-size:cover; background-position:center;">
+                    <span class="episodio-thumb-icon">▶</span>
+                  </div>
+                  <div class="episodio-info">
+                    <div class="episodio-titulo">Ep 3: Sentimentos</div>
+                    <div class="episodio-duracao">5 min • Grátis</div>
+                  </div>
+                </div>
+                <div class="episodio-item">
+                  <div class="episodio-thumb" style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.5)), url('assets/thumbnails/suspense_1.jpg'); background-size:cover; background-position:center;">
+                    <span class="episodio-thumb-icon">▶</span>
+                  </div>
+                  <div class="episodio-info">
+                    <div class="episodio-titulo">Ep 4: A Verdade</div>
+                    <div class="episodio-duracao">5 min • 50 moedas</div>
+                  </div>
+                  <span class="episodio-cadeado">🔒</span>
+                </div>
+                <div class="episodio-item">
+                  <div class="episodio-thumb" style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.5)), url('assets/thumbnails/familia_1.jpg'); background-size:cover; background-position:center;">
+                    <span class="episodio-thumb-icon">▶</span>
+                  </div>
+                  <div class="episodio-info">
+                    <div class="episodio-titulo">Ep 5: Confronto</div>
+                    <div class="episodio-duracao">5 min • 50 moedas</div>
+                  </div>
+                  <span class="episodio-cadeado">🔒</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="desktop-wrapper">
+          <div class="desktop-label">💻 Computador</div>
+          <div class="desktop">
+            <div class="desktop-barra">
+              <div class="ponto vermelho"></div>
+              <div class="ponto amarelo"></div>
+              <div class="ponto verde"></div>
+            </div>
+            <div style="padding: 24px;">
+              <div class="desktop-detalhes-hero">
+                <div class="desktop-detalhes-info">
+                  <h1 class="desktop-detalhes-titulo">Casamento Falso</h1>
+                  <div class="desktop-detalhes-meta">
+                    <span style="color: var(--laranja); font-weight: 700;">⭐ 4.8</span>
+                    <span>2026</span>
+                    <span>Romance</span>
+                    <span>32 episódios</span>
+                  </div>
+                  <p class="desktop-detalhes-descricao">
+                    Ela aceitou casar com o bilionário por 1 milhão de reais. Era apenas um contrato, sem amor, sem carinho. Mas quando o coração começa a falar mais alto que o dinheiro, tudo pode acontecer...
+                  </p>
+                  <div class="desktop-detalhes-botoes">
+                    <button class="botao-play">▶ Assistir Ep. 1</button>
+                    <button class="botao-add">+ Minha Lista</button>
+                    <button class="botao-add">📤 Compartilhar</button>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="desktop-secao-titulo">📺 Episódios</h3>
+              <div class="desktop-episodios-grade">
+                <div class="desktop-ep-card">
+                  <div class="desktop-ep-thumb">▶</div>
+                  <div class="desktop-ep-info">
+                    <div class="desktop-ep-titulo">Ep 1: O Acordo</div>
+                    <div class="desktop-ep-duracao">5 min • Grátis</div>
+                  </div>
+                </div>
+                <div class="desktop-ep-card">
+                  <div class="desktop-ep-thumb" style="background: linear-gradient(rgba(0,0,0,0.25),rgba(0,0,0,0.45)), url('assets/thumbnails/romance_2.jpg'); background-size:cover; background-position:center;">▶</div>
+                  <div class="desktop-ep-info">
+                    <div class="desktop-ep-titulo">Ep 2: Primeira Noite</div>
+                    <div class="desktop-ep-duracao">5 min • Grátis</div>
+                  </div>
+                </div>
+                <div class="desktop-ep-card">
+                  <div class="desktop-ep-thumb" style="background: linear-gradient(rgba(0,0,0,0.25),rgba(0,0,0,0.45)), url('assets/thumbnails/drama_1.jpg'); background-size:cover; background-position:center;">▶</div>
+                  <div class="desktop-ep-info">
+                    <div class="desktop-ep-titulo">Ep 3: Sentimentos</div>
+                    <div class="desktop-ep-duracao">5 min • Grátis</div>
+                  </div>
+                </div>
+                <div class="desktop-ep-card">
+                  <div class="desktop-ep-thumb" style="background: linear-gradient(135deg, #8b1a3a, #4a0a1a);">🔒</div>
+                  <div class="desktop-ep-info">
+                    <div class="desktop-ep-titulo">Ep 4: A Verdade</div>
+                    <div class="desktop-ep-duracao" style="color: var(--laranja);">50 moedas</div>
+                  </div>
+                </div>
+                <div class="desktop-ep-card">
+                  <div class="desktop-ep-thumb" style="background: linear-gradient(135deg, #1a8b4a, #0a4a1a);">🔒</div>
+                  <div class="desktop-ep-info">
+                    <div class="desktop-ep-titulo">Ep 5: Confronto</div>
+                    <div class="desktop-ep-duracao" style="color: var(--laranja);">50 moedas</div>
+                  </div>
+                </div>
+                <div class="desktop-ep-card">
+                  <div class="desktop-ep-thumb" style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.5)), url('assets/thumbnails/romance_1.jpg'); background-size:cover; background-position:center;">🔒</div>
+                  <div class="desktop-ep-info">
+                    <div class="desktop-ep-titulo">Ep 6: Decisão</div>
+                    <div class="desktop-ep-duracao" style="color: var(--laranja);">50 moedas</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         TELA 6: BUSCA
+         ==================================================== -->
+    <div id="tela-busca" class="tela">
+      <div class="palco-header" style="width:100%;">
+        <h1>🔍 Tela de Busca</h1>
+        <p>Onde o usuário procura dramas por nome, gênero ou tendência.</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular</div>
+          <div class="celular">
+            <div class="status-bar">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo">
+              <div class="busca-header">
+                <h2 class="busca-titulo">🔍 Buscar</h2>
+                <div class="busca-input-wrapper">
+                  <span class="busca-icon">🔍</span>
+                  <input class="busca-input" placeholder="Buscar drama, série, gênero...">
+                </div>
+              </div>
+
+              <h3 class="busca-secao-titulo">🏷️ Buscas Populares</h3>
+              <div class="busca-tags">
+                <span class="busca-tag popular">Romance CEO</span>
+                <span class="busca-tag">Casamento</span>
+                <span class="busca-tag">Vingança</span>
+                <span class="busca-tag popular">Lobo Alfa</span>
+                <span class="busca-tag">Família Rica</span>
+                <span class="busca-tag">Princesa</span>
+                <span class="busca-tag">Mafia</span>
+              </div>
+
+              <h3 class="busca-secao-titulo">🔥 Tendências</h3>
+              <div class="grade-tendencias">
+                <div class="tendencia-card">
+                  <span class="tendencia-numero">1</span>
+                  <div class="tendencia-info">
+                    <div class="tendencia-titulo">Casamento Falso</div>
+                    <div class="tendencia-categoria">Romance</div>
+                  </div>
+                </div>
+                <div class="tendencia-card">
+                  <span class="tendencia-numero">2</span>
+                  <div class="tendencia-info">
+                    <div class="tendencia-titulo">Lobo Alfa</div>
+                    <div class="tendencia-categoria">Drama</div>
+                  </div>
+                </div>
+                <div class="tendencia-card">
+                  <span class="tendencia-numero">3</span>
+                  <div class="tendencia-info">
+                    <div class="tendencia-titulo">Vingança Doce</div>
+                    <div class="tendencia-categoria">Suspense</div>
+                  </div>
+                </div>
+                <div class="tendencia-card">
+                  <span class="tendencia-numero">4</span>
+                  <div class="tendencia-info">
+                    <div class="tendencia-titulo">Filha Perdida</div>
+                    <div class="tendencia-categoria">Família</div>
+                  </div>
+                </div>
+                <div class="tendencia-card">
+                  <span class="tendencia-numero">5</span>
+                  <div class="tendencia-info">
+                    <div class="tendencia-titulo">Príncipe Real</div>
+                    <div class="tendencia-categoria">Romance</div>
+                  </div>
+                </div>
+                <div class="tendencia-card">
+                  <span class="tendencia-numero">6</span>
+                  <div class="tendencia-info">
+                    <div class="tendencia-titulo">Coração de Gelo</div>
+                    <div class="tendencia-categoria">Drama</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="nav-inferior">
+              <div class="nav-item">
+                <div class="nav-icon">🏠</div>
+                <span>Início</span>
+              </div>
+              <div class="nav-item ativo">
+                <div class="nav-icon">🔍</div>
+                <span>Buscar</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">🪙</div>
+                <span>Carteira</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <span>Perfil</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         TELA 7: CARTEIRA
+         ==================================================== -->
+    <div id="tela-carteira" class="tela">
+      <div class="palco-header" style="width:100%;">
+        <h1>🪙 Tela da Carteira</h1>
+        <p>Mostra o saldo de moedas, pacotes para comprar e histórico de transações.</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular</div>
+          <div class="celular">
+            <div class="status-bar">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo">
+              <div class="carteira-header">
+                <h2 class="carteira-titulo">🪙 Minha Carteira</h2>
+              </div>
+
+              <div class="carteira-saldo-card">
+                <div class="carteira-saldo-label">Saldo Atual</div>
+                <div class="carteira-saldo-valor">2.450</div>
+                <div class="carteira-saldo-moeda">moedas DigVue</div>
+              </div>
+
+              <h3 class="pacotes-titulo">💰 Comprar Moedas</h3>
+              <div class="pacotes-grade">
+                <div class="pacote-card">
+                  <div style="font-size: 28px;">🪙</div>
+                  <div class="pacote-moedas">100</div>
+                  <div class="pacote-bonus">moedas</div>
+                  <div class="pacote-preco">R$ 9,90</div>
+                </div>
+                <div class="pacote-card popular">
+                  <div style="font-size: 28px;">🪙</div>
+                  <div class="pacote-moedas">500</div>
+                  <div class="pacote-bonus">+50 bônus</div>
+                  <div class="pacote-preco">R$ 39,90</div>
+                </div>
+                <div class="pacote-card">
+                  <div style="font-size: 28px;">🪙</div>
+                  <div class="pacote-moedas">1000</div>
+                  <div class="pacote-bonus">+200 bônus</div>
+                  <div class="pacote-preco">R$ 79,90</div>
+                </div>
+                <div class="pacote-card">
+                  <div style="font-size: 28px;">💎</div>
+                  <div class="pacote-moedas">5000</div>
+                  <div class="pacote-bonus">+1500 bônus</div>
+                  <div class="pacote-preco">R$ 299,90</div>
+                </div>
+              </div>
+
+              <h3 class="historico-titulo">📜 Histórico</h3>
+              <div class="historico-item">
+                <div>
+                  <div class="historico-info">Episódio 4 desbloqueado</div>
+                  <div class="historico-data">Hoje • 14:30</div>
+                </div>
+                <div class="historico-valor negativo">-50</div>
+              </div>
+              <div class="historico-item">
+                <div>
+                  <div class="historico-info">Pacote 500 moedas</div>
+                  <div class="historico-data">Ontem • 19:15</div>
+                </div>
+                <div class="historico-valor positivo">+550</div>
+              </div>
+              <div class="historico-item">
+                <div>
+                  <div class="historico-info">Anúncio assistido</div>
+                  <div class="historico-data">Ontem • 12:00</div>
+                </div>
+                <div class="historico-valor positivo">+10</div>
+              </div>
+              <div class="historico-item">
+                <div>
+                  <div class="historico-info">Bônus diário</div>
+                  <div class="historico-data">2 dias atrás</div>
+                </div>
+                <div class="historico-valor positivo">+25</div>
+              </div>
+            </div>
+
+            <div class="nav-inferior">
+              <div class="nav-item">
+                <div class="nav-icon">🏠</div>
+                <span>Início</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">🔍</div>
+                <span>Buscar</span>
+              </div>
+              <div class="nav-item ativo">
+                <div class="nav-icon">🪙</div>
+                <span>Carteira</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <span>Perfil</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         TELA 8: VIP
+         ==================================================== -->
+    <div id="tela-vip" class="tela">
+      <div class="palco-header" style="width:100%;">
+        <h1>💎 Tela VIP</h1>
+        <p>Página de assinatura premium — onde o usuário compra o plano para liberar tudo.</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular</div>
+          <div class="celular">
+            <div class="status-bar">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo">
+              <div class="vip">
+                <div class="vip-coroa">👑</div>
+                <h1 class="vip-titulo-grande">DigVue VIP</h1>
+                <p class="vip-subtitulo">Assista tudo sem limites</p>
+
+                <div class="vip-beneficios">
+                  <div class="vip-beneficio">
+                    <div class="vip-check">✓</div>
+                    <div class="vip-beneficio-texto">Todos os episódios liberados</div>
+                  </div>
+                  <div class="vip-beneficio">
+                    <div class="vip-check">✓</div>
+                    <div class="vip-beneficio-texto">Sem anúncios</div>
+                  </div>
+                  <div class="vip-beneficio">
+                    <div class="vip-check">✓</div>
+                    <div class="vip-beneficio-texto">Conteúdo exclusivo</div>
+                  </div>
+                  <div class="vip-beneficio">
+                    <div class="vip-check">✓</div>
+                    <div class="vip-beneficio-texto">Qualidade HD</div>
+                  </div>
+                  <div class="vip-beneficio">
+                    <div class="vip-check">✓</div>
+                    <div class="vip-beneficio-texto">Download offline</div>
+                  </div>
+                </div>
+
+                <div class="vip-planos">
+                  <div class="vip-plano">
+                    <div class="vip-plano-row">
+                      <div>
+                        <div class="vip-plano-nome">📅 Mensal</div>
+                        <div class="vip-plano-economia">Comece agora</div>
+                      </div>
+                      <div style="text-align: right;">
+                        <div class="vip-plano-preco">R$ 19,90</div>
+                        <div class="vip-plano-periodo">por mês</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="vip-plano selecionado">
+                    <div class="vip-plano-row">
+                      <div>
+                        <div class="vip-plano-nome">⭐ Anual</div>
+                        <div class="vip-plano-economia">Economize 60%!</div>
+                      </div>
+                      <div style="text-align: right;">
+                        <div class="vip-plano-preco">R$ 99,90</div>
+                        <div class="vip-plano-periodo">por ano</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="vip-plano">
+                    <div class="vip-plano-row">
+                      <div>
+                        <div class="vip-plano-nome">💎 Vitalício</div>
+                        <div class="vip-plano-economia">Pague uma vez só</div>
+                      </div>
+                      <div style="text-align: right;">
+                        <div class="vip-plano-preco">R$ 299</div>
+                        <div class="vip-plano-periodo">único</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button class="botao-laranja">Assinar VIP Anual 👑</button>
+
+                <p style="text-align: center; color: var(--cinza-claro); font-size: 11px; margin-top: 16px; padding-bottom: 16px;">
+                  Cancele quando quiser. Sem fidelidade.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         TELA 9: PERFIL
+         ==================================================== -->
+    <div id="tela-perfil" class="tela">
+      <div class="palco-header" style="width:100%;">
+        <h1>👤 Tela de Perfil</h1>
+        <p>Página do usuário com dados, estatísticas e atalhos para configurações.</p>
+      </div>
+
+      <div class="telas-wrapper">
+        <div class="celular-wrapper">
+          <div class="celular-label">📱 Celular</div>
+          <div class="celular">
+            <div class="status-bar">
+              <span class="horario">9:41</span>
+              <span class="icones">📶 📡 🔋</span>
+            </div>
+            <div class="celular-conteudo">
+              <div class="perfil-header">
+                <div class="perfil-foto">M</div>
+                <h2 class="perfil-nome">Maria Silva</h2>
+                <p class="perfil-email">maria.silva@email.com</p>
+                <span class="perfil-vip-badge">👑 VIP Anual</span>
+              </div>
+
+              <div class="perfil-stats">
+                <div class="perfil-stat">
+                  <div class="perfil-stat-num">2450</div>
+                  <div class="perfil-stat-label">Moedas</div>
+                </div>
+                <div class="perfil-stat">
+                  <div class="perfil-stat-num">42</div>
+                  <div class="perfil-stat-label">Assistidos</div>
+                </div>
+                <div class="perfil-stat">
+                  <div class="perfil-stat-num">15</div>
+                  <div class="perfil-stat-label">Favoritos</div>
+                </div>
+              </div>
+
+              <div class="perfil-menu">
+                <div class="perfil-item">
+                  <div class="perfil-item-icon">📺</div>
+                  <div class="perfil-item-texto">Continuar Assistindo</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+                <div class="perfil-item">
+                  <div class="perfil-item-icon">❤️</div>
+                  <div class="perfil-item-texto">Minha Lista</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+                <div class="perfil-item">
+                  <div class="perfil-item-icon">📜</div>
+                  <div class="perfil-item-texto">Histórico</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+                <div class="perfil-item">
+                  <div class="perfil-item-icon">🪙</div>
+                  <div class="perfil-item-texto">Carteira de Moedas</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+                <div class="perfil-item">
+                  <div class="perfil-item-icon">💎</div>
+                  <div class="perfil-item-texto">Gerenciar VIP</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+                <div class="perfil-item">
+                  <div class="perfil-item-icon">🔔</div>
+                  <div class="perfil-item-texto">Notificações</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+                <div class="perfil-item">
+                  <div class="perfil-item-icon">⚙️</div>
+                  <div class="perfil-item-texto">Configurações</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+                <div class="perfil-item">
+                  <div class="perfil-item-icon">❓</div>
+                  <div class="perfil-item-texto">Ajuda e Suporte</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+                <div class="perfil-item" style="margin-bottom: 24px;">
+                  <div class="perfil-item-icon">🚪</div>
+                  <div class="perfil-item-texto" style="color: #f87171;">Sair</div>
+                  <span class="perfil-item-seta">›</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="nav-inferior">
+              <div class="nav-item">
+                <div class="nav-icon">🏠</div>
+                <span>Início</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">🔍</div>
+                <span>Buscar</span>
+              </div>
+              <div class="nav-item">
+                <div class="nav-icon">🪙</div>
+                <span>Carteira</span>
+              </div>
+              <div class="nav-item ativo">
+                <div class="nav-icon">👤</div>
+                <span>Perfil</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Função do "elevador" — leva até a tela escolhida
+  function mostrar(nomeTela, btn) {
+    // Esconde todas as telas
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('active'));
+    // Mostra a tela escolhida
+    document.getElementById('tela-' + nomeTela).classList.add('active');
+
+    // Tira o destaque dos outros botões
+    document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+    // Destaca o botão clicado
+    btn.classList.add('active');
+
+    // Volta o scroll para o topo
+    document.querySelector('.palco').scrollTop = 0;
+  }
+</script>
+
+</body>
+</html>

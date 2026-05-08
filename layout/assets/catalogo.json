@@ -1,0 +1,114 @@
+{
+  "series": [
+    {
+      "id": 1,
+      "titulo": "Casamento Falso",
+      "categoria": "Romance",
+      "thumb": "assets/thumbnails/romance_1.jpg",
+      "banner": "assets/thumbnails/romance_2.jpg",
+      "episodios": 32,
+      "avaliacao": 4.8,
+      "gratis_ate": 3,
+      "descricao": "Ela aceitou casar por 1 milhão. Mas o coração não obedece contratos..."
+    },
+    {
+      "id": 2,
+      "titulo": "Vingança Doce",
+      "categoria": "Suspense",
+      "thumb": "assets/thumbnails/suspense_1.jpg",
+      "banner": "assets/thumbnails/suspense_2.jpg",
+      "episodios": 28,
+      "avaliacao": 4.6,
+      "gratis_ate": 2,
+      "descricao": "Depois de perder tudo, ela retorna mais forte — e o alvo é aquele que destruiu sua família."
+    },
+    {
+      "id": 3,
+      "titulo": "Lobo Alfa",
+      "categoria": "Drama",
+      "thumb": "assets/thumbnails/drama_1.jpg",
+      "banner": "assets/thumbnails/drama_2.jpg",
+      "episodios": 50,
+      "avaliacao": 4.9,
+      "gratis_ate": 3,
+      "descricao": "Num mundo onde humanos e lobos coexistem, dois destinos opostos se entrelaçam de forma inevitável."
+    },
+    {
+      "id": 4,
+      "titulo": "Filha Perdida",
+      "categoria": "Família",
+      "thumb": "assets/thumbnails/familia_1.jpg",
+      "banner": "assets/thumbnails/familia_2.jpg",
+      "episodios": 40,
+      "avaliacao": 4.7,
+      "gratis_ate": 3,
+      "descricao": "Vinte anos depois, uma jovem descobre que foi adotada e parte em busca de sua verdadeira família."
+    },
+    {
+      "id": 5,
+      "titulo": "Coração de Gelo",
+      "categoria": "Romance",
+      "thumb": "assets/thumbnails/romance_3.jpg",
+      "banner": "assets/thumbnails/romance_1.jpg",
+      "episodios": 38,
+      "avaliacao": 4.8,
+      "gratis_ate": 2,
+      "descricao": "O CEO mais frio da cidade prometeu que jamais se apaixonaria. Ela apareceu para provar o contrário."
+    },
+    {
+      "id": 6,
+      "titulo": "Príncipe Real",
+      "categoria": "Romance",
+      "thumb": "assets/thumbnails/romance_2.jpg",
+      "banner": "assets/thumbnails/romance_3.jpg",
+      "episodios": 45,
+      "avaliacao": 4.9,
+      "gratis_ate": 3,
+      "descricao": "Uma garota comum se apaixona pelo príncipe mais cobiçado do mundo. Mas o amor pode sobreviver ao trono?"
+    },
+    {
+      "id": 7,
+      "titulo": "O Segredo da Herdeira",
+      "categoria": "Suspense",
+      "thumb": "assets/thumbnails/suspense_3.jpg",
+      "banner": "assets/thumbnails/suspense_1.jpg",
+      "episodios": 36,
+      "avaliacao": 4.7,
+      "gratis_ate": 2,
+      "descricao": "A jovem herdeira da maior fortuna do país guarda um segredo que pode destruir sua família — e o homem que ela ama."
+    },
+    {
+      "id": 8,
+      "titulo": "Amor Proibido",
+      "categoria": "Drama",
+      "thumb": "assets/thumbnails/drama_3.jpg",
+      "banner": "assets/thumbnails/drama_1.jpg",
+      "episodios": 30,
+      "avaliacao": 4.6,
+      "gratis_ate": 3,
+      "descricao": "Ele é o filho do inimigo. Ela é a filha da vítima. O amor que nasceu entre eles não deveria existir."
+    },
+    {
+      "id": 9,
+      "titulo": "Traição Silenciosa",
+      "categoria": "Drama",
+      "thumb": "assets/thumbnails/drama_2.jpg",
+      "banner": "assets/thumbnails/drama_3.jpg",
+      "episodios": 42,
+      "avaliacao": 4.5,
+      "gratis_ate": 2,
+      "descricao": "Por dez anos ela acreditou que tinha o casamento perfeito. Uma mensagem no celular mudou tudo."
+    },
+    {
+      "id": 10,
+      "titulo": "A Última Chance",
+      "categoria": "Família",
+      "thumb": "assets/thumbnails/familia_3.jpg",
+      "banner": "assets/thumbnails/familia_1.jpg",
+      "episodios": 24,
+      "avaliacao": 4.8,
+      "gratis_ate": 3,
+      "descricao": "Um pai ausente, uma filha que cresceu sem ele e um diagnóstico que dá a ambos apenas 30 dias para se conhecerem."
+    }
+  ]
+}

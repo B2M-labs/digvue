@@ -1,0 +1,68 @@
+:root {
+  --laranja: #FF6B1A;
+  --laranja-claro: #FF8A47;
+  --laranja-escuro: #E55A0F;
+  --preto: #0A0A0A;
+  --preto-suave: #141414;
+  --cinza-escuro: #1F1F1F;
+  --cinza-medio: #2A2A2A;
+  --cinza-claro: #888888;
+  --branco: #FFFFFF;
+  --branco-suave: #F5F5F5;
+
+  --nav-height: 64px;
+  --header-height: 60px;
+  --page-padding: 16px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body, #root {
+  background: var(--preto);
+  color: var(--branco);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  overflow-x: hidden;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+button { font-family: inherit; cursor: pointer; }
+input  { font-family: inherit; }
+a      { color: inherit; text-decoration: none; }
+
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+@keyframes loadingBar {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.page {
+  animation: fadeIn 0.3s ease;
+  padding-bottom: calc(var(--nav-height) + 16px);
+}
+
+/* Cores dos cards */
+.cor1 { background: linear-gradient(135deg, #ff6b1a, #8b2f0e); }
+.cor2 { background: linear-gradient(135deg, #1a3a8b, #0a1a4a); }
+.cor3 { background: linear-gradient(135deg, #4a1a8b, #1a0a4a); }
+.cor4 { background: linear-gradient(135deg, #8b1a3a, #4a0a1a); }
+.cor5 { background: linear-gradient(135deg, #1a8b4a, #0a4a1a); }
