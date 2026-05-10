@@ -343,7 +343,7 @@ export default function Player() {
 
             <div style={{ display: 'flex', gap: 12, padding: '16px 20px 0', overflowX: 'auto' }}>
               {produtosEp.map((p) => (
-                <div key={p.url} style={{ flexShrink: 0, width: 140 }}>
+                <div key={p.url.pt} style={{ flexShrink: 0, width: 140 }}>
                   <img
                     src={p.img}
                     alt={p.titulo[lang]}
