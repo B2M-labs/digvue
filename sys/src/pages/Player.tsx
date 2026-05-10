@@ -9,6 +9,7 @@ import { dramas } from '../data/dramas'
 import { getEpisodios } from '../data/episodios'
 import { produtosPorEpisodio } from '../data/produtos'
 import { useUser } from '../context/UserContext'
+import { useLang } from '../context/LangContext'
 
 export default function Player() {
   const { id, ep } = useParams()
@@ -17,6 +18,7 @@ export default function Player() {
   const progressRef = useRef<HTMLDivElement>(null)
 
   const { saldo, desbloqueados, gastar, desbloquear } = useUser()
+  const { lang, t } = useLang()
 
   const drama = dramas.find((d) => d.id === id)
   const epNum = Number(ep ?? 1)
@@ -102,18 +104,18 @@ export default function Player() {
   const anteriorEp = episodios[epNum - 2]
 
   if (!drama || !episodio) {
-    return <div style={{ color: 'var(--cinza-claro)', padding: 24 }}>Episódio não encontrado.</div>
+    return <div style={{ color: 'var(--cinza-claro)', padding: 24 }}>{t('player_not_found')}</div>
   }
 
   const sideActions = [
-    { Icon: ShoppingCart, label: 'Loja',   fill: false, action: () => setShowLoja(true) },
-    { Icon: Heart,        label: '12.5K',  fill: curtido, action: () => setCurtido((v) => !v) },
-    { Icon: MessageCircle,label: '348',    fill: false, action: () => {} },
-    { Icon: Share2,       label: 'Enviar', fill: false, action: () => {} },
+    { Icon: ShoppingCart, label: t('player_shop_label'), fill: false, action: () => setShowLoja(true) },
+    { Icon: Heart,        label: '12.5K',                fill: curtido, action: () => setCurtido((v) => !v) },
+    { Icon: MessageCircle,label: '348',                  fill: false, action: () => {} },
+    { Icon: Share2,       label: t('player_free'),       fill: false, action: () => {} },
   ]
 
   function usarMoedas() {
-    const ok = gastar(50, `Ep ${epNum} desbloqueado — ${drama?.titulo ?? ''}`)
+    const ok = gastar(50, `Ep ${epNum} ${t('player_unlocked_word')} — ${drama?.titulo[lang] ?? ''}`)
     if (ok) {
       desbloquear(chaveEp)
       setErroMoedas(false)
@@ -123,9 +125,15 @@ export default function Player() {
   }
 
   const unlockOptions = [
-    { Icon: Coins, label: 'Usar 50 moedas',  right: saldo >= 50 ? `${saldo} 🪙` : 'Saldo insuficiente', primary: true,  action: usarMoedas },
-    { Icon: Tv,    label: 'Assistir anúncio',right: 'Grátis',   primary: false, action: () => {} },
-    { Icon: Gem,   label: 'Assinar VIP',     right: 'R$ 19,90', primary: false, action: () => navigate('/vip') },
+    {
+      Icon: Coins,
+      label: t('player_use_coins'),
+      right: saldo >= 50 ? `${saldo} 🪙` : t('player_insufficient_short'),
+      primary: true,
+      action: usarMoedas,
+    },
+    { Icon: Tv,  label: t('player_watch_ad'),      right: t('player_free'),   primary: false, action: () => {} },
+    { Icon: Gem, label: t('player_subscribe_vip'), right: 'R$ 19,90',         primary: false, action: () => navigate('/vip') },
   ]
 
   return (
@@ -177,9 +185,9 @@ export default function Player() {
           </button>
 
           <div style={{ textAlign: 'center', flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{drama.titulo}</div>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>{drama.titulo[lang]}</div>
             <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.65)' }}>
-              Ep {epNum}: {episodio.titulo}
+              Ep {epNum}: {episodio.titulo[lang]}
             </div>
           </div>
 
@@ -232,10 +240,10 @@ export default function Player() {
           position: 'absolute', bottom: 32, left: 20, right: 72, zIndex: 20,
         }} onClick={(e) => e.stopPropagation()}>
           <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 4 }}>
-            Ep {epNum}: {episodio.titulo}
+            Ep {epNum}: {episodio.titulo[lang]}
           </h3>
           <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', marginBottom: 14, lineHeight: 1.4 }}>
-            {drama.descricao}
+            {drama.descricao[lang]}
           </p>
 
           <div style={{ display: 'flex', gap: 8 }}>
@@ -314,16 +322,15 @@ export default function Player() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
             <div style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               padding: '18px 20px 14px',
               borderBottom: '1px solid var(--cinza-escuro)',
             }}>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 800 }}>Itens do Episódio</div>
+                <div style={{ fontSize: 16, fontWeight: 800 }}>{t('player_shop_title')}</div>
                 <div style={{ fontSize: 12, color: 'var(--cinza-claro)', marginTop: 2 }}>
-                  Itens vistos nessa cena
+                  {t('player_shop_subtitle')}
                 </div>
               </div>
               <button
@@ -334,13 +341,12 @@ export default function Player() {
               </button>
             </div>
 
-            {/* Produtos */}
             <div style={{ display: 'flex', gap: 12, padding: '16px 20px 0', overflowX: 'auto' }}>
               {produtosEp.map((p) => (
                 <div key={p.url} style={{ flexShrink: 0, width: 140 }}>
                   <img
                     src={p.img}
-                    alt={p.titulo}
+                    alt={p.titulo[lang]}
                     style={{ width: 140, height: 140, borderRadius: 12, objectFit: 'cover', display: 'block', background: 'var(--cinza-escuro)' }}
                   />
                   <p style={{
@@ -348,10 +354,10 @@ export default function Player() {
                     lineHeight: 1.4,
                     display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                   }}>
-                    {p.titulo}
+                    {p.titulo[lang]}
                   </p>
                   <a
-                    href={p.url}
+                    href={p.url[lang]}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -361,7 +367,7 @@ export default function Player() {
                       fontSize: 12, fontWeight: 700, color: 'var(--branco)', textDecoration: 'none',
                     }}
                   >
-                    Comprar <ExternalLink size={12} />
+                    {t('player_buy')} <ExternalLink size={12} />
                   </a>
                 </div>
               ))}
@@ -388,13 +394,13 @@ export default function Player() {
           </div>
 
           <div style={{ color: 'var(--branco)', marginBottom: 16 }}><Lock size={52} /></div>
-          <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Episódio Bloqueado</h3>
+          <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>{t('player_locked_title')}</h3>
           <p style={{ color: 'var(--cinza-claro)', fontSize: 14, marginBottom: erroMoedas ? 8 : 24 }}>
-            Desbloqueie para continuar assistindo
+            {t('player_locked_desc')}
           </p>
           {erroMoedas && (
             <p style={{ color: '#f87171', fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
-              Saldo insuficiente. Compre mais moedas ou assista um anúncio.
+              {t('player_locked_error')}
             </p>
           )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>

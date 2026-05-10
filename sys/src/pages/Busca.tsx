@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Search, Tag, TrendingUp } from 'lucide-react'
 import DramaCard from '../components/DramaCard'
 import { dramas } from '../data/dramas'
+import { useLang } from '../context/LangContext'
 
 const tags = [
   { label: 'Romance CEO', popular: true },
@@ -17,12 +18,25 @@ const tags = [
 export default function Busca() {
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
+  const { lang, t } = useLang()
+
+  const catLabel: Record<string, string> = {
+    'Romance':  t('cat_romance'),
+    'Drama':    t('cat_drama'),
+    'Comédia':  t('cat_comedy'),
+    'Suspense': t('cat_suspense'),
+    'Família':  t('cat_family'),
+  }
 
   const resultados = query.length >= 2
-    ? dramas.filter((d) =>
-        d.titulo.toLowerCase().includes(query.toLowerCase()) ||
-        d.categoria.toLowerCase().includes(query.toLowerCase())
-      )
+    ? dramas.filter((d) => {
+        const q = query.toLowerCase()
+        return (
+          d.titulo.pt.toLowerCase().includes(q) ||
+          d.titulo.en.toLowerCase().includes(q) ||
+          d.categoria.toLowerCase().includes(q)
+        )
+      })
     : []
 
   return (
@@ -36,7 +50,7 @@ export default function Busca() {
         borderBottom: '1px solid var(--cinza-escuro)',
       }}>
         <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Search size={20} /> Buscar
+          <Search size={20} /> {t('search_title')}
         </h2>
         <div style={{ position: 'relative' }}>
           <span style={{
@@ -49,7 +63,7 @@ export default function Busca() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar drama, série, gênero..."
+            placeholder={t('search_placeholder')}
             style={{
               width: '100%',
               padding: '13px 16px 13px 44px',
@@ -67,7 +81,7 @@ export default function Busca() {
         {query.length >= 2 ? (
           <>
             <h3 style={{ padding: '20px 0 12px', fontSize: 15, fontWeight: 700 }}>
-              {resultados.length} resultado{resultados.length !== 1 ? 's' : ''} para "{query}"
+              {resultados.length} {resultados.length !== 1 ? t('search_results') : t('search_result')} {t('search_for')} &ldquo;{query}&rdquo;
             </h3>
             {resultados.length > 0 ? (
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -75,14 +89,14 @@ export default function Busca() {
               </div>
             ) : (
               <p style={{ color: 'var(--cinza-claro)', fontSize: 14, marginTop: 8 }}>
-                Nenhum drama encontrado.
+                {t('search_no_results')}
               </p>
             )}
           </>
         ) : (
           <>
             <h3 style={{ padding: '20px 0 12px', fontSize: 15, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 7 }}>
-              <Tag size={15} /> Buscas Populares
+              <Tag size={15} /> {t('search_popular')}
             </h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {tags.map(({ label, popular }) => (
@@ -104,7 +118,7 @@ export default function Busca() {
             </div>
 
             <h3 style={{ padding: '24px 0 12px', fontSize: 15, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 7 }}>
-              <TrendingUp size={15} /> Tendências
+              <TrendingUp size={15} /> {t('search_trending')}
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               {dramas.slice(0, 6).map((d, i) => (
@@ -121,8 +135,8 @@ export default function Busca() {
                     fontSize: 30, color: 'var(--laranja)', lineHeight: 1, width: 28,
                   }}>{i + 1}</span>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2 }}>{d.titulo}</div>
-                    <div style={{ fontSize: 11, color: 'var(--cinza-claro)' }}>{d.categoria}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2 }}>{d.titulo[lang]}</div>
+                    <div style={{ fontSize: 11, color: 'var(--cinza-claro)' }}>{catLabel[d.categoria] ?? d.categoria}</div>
                   </div>
                 </div>
               ))}

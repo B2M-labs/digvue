@@ -1,7 +1,7 @@
 export type EpVideo = { thumb: string; url: string }
 export type Episodio = {
   num: number
-  titulo: string
+  titulo: { pt: string; en: string }
   duracao: string
   thumb: string
   videoUrl: string
@@ -88,15 +88,15 @@ Object.keys(videosByDrama).forEach((id) => {
   }
 })
 
-const titulos = [
-  'O Acordo',
-  'A Primeira Noite',
-  'Sentimentos Proibidos',
-  'A Verdade Vem à Tona',
-  'Confronto',
-  'O Preço do Amor',
-  'Sem Saída',
-  'A Decisão Final',
+const titulos: { pt: string; en: string }[] = [
+  { pt: 'O Acordo',               en: 'The Deal' },
+  { pt: 'A Primeira Noite',       en: 'The First Night' },
+  { pt: 'Sentimentos Proibidos',  en: 'Forbidden Feelings' },
+  { pt: 'A Verdade Vem à Tona',   en: 'The Truth Comes Out' },
+  { pt: 'Confronto',              en: 'Confrontation' },
+  { pt: 'O Preço do Amor',        en: 'The Price of Love' },
+  { pt: 'Sem Saída',              en: 'No Way Out' },
+  { pt: 'A Decisão Final',        en: 'The Final Decision' },
 ]
 
 const duracoes = ['5 min', '6 min', '7 min', '5 min', '6 min', '7 min', '5 min', '6 min']
@@ -107,7 +107,7 @@ export function getEpisodios(dramaId: string, totalEps: number, gratisAte = 3): 
 
   return Array.from({ length: count }, (_, i) => ({
     num: i + 1,
-    titulo: titulos[i] ?? `Episódio ${i + 1}`,
+    titulo: titulos[i] ?? { pt: `Episódio ${i + 1}`, en: `Episode ${i + 1}` },
     duracao: duracoes[i],
     thumb: videos[i].thumb,
     videoUrl: videos[i].url,

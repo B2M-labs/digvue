@@ -3,17 +3,19 @@ import { ArrowLeft, Play, Star, Plus, Share2, Lock } from 'lucide-react'
 import { dramas } from '../data/dramas'
 import { getEpisodios } from '../data/episodios'
 import { useUser } from '../context/UserContext'
+import { useLang } from '../context/LangContext'
 
 export default function Detalhes() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { desbloqueados } = useUser()
+  const { lang, t } = useLang()
   const drama = dramas.find((d) => d.id === id)
 
   if (!drama) {
     return (
       <div style={{ padding: 24, textAlign: 'center', color: 'var(--cinza-claro)' }}>
-        Drama não encontrado.
+        {t('detalhes_not_found')}
       </div>
     )
   }
@@ -64,7 +66,7 @@ export default function Detalhes() {
       </div>
 
       <div style={{ padding: '16px var(--page-padding) 0' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 10 }}>{drama.titulo}</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 10 }}>{drama.titulo[lang]}</h1>
 
         <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
           {tags.map(({ content, orange }, i) => (
@@ -78,7 +80,7 @@ export default function Detalhes() {
         </div>
 
         <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.82)', lineHeight: 1.65, marginBottom: 20 }}>
-          {drama.descricao}
+          {drama.descricao[lang]}
         </p>
 
         <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
@@ -92,7 +94,7 @@ export default function Detalhes() {
               cursor: 'pointer',
             }}
           >
-            <Play size={14} fill="currentColor" /> Episódio 1
+            <Play size={14} fill="currentColor" /> {t('detalhes_ep1_btn')}
           </button>
           <button style={{
             padding: '12px 14px', background: 'var(--cinza-escuro)',
@@ -100,7 +102,7 @@ export default function Detalhes() {
             color: 'var(--branco)', fontWeight: 700, fontSize: 14,
             display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer',
           }}>
-            <Plus size={16} /> Lista
+            <Plus size={16} /> {t('detalhes_watchlist')}
           </button>
           <button style={{
             padding: '12px 14px', background: 'var(--cinza-escuro)',
@@ -113,10 +115,10 @@ export default function Detalhes() {
         </div>
 
         {/* Lista de episódios */}
-        <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }}>Episódios</h3>
+        <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }}>{t('detalhes_episodes')}</h3>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {episodios.map(({ num, titulo, duracao, thumb, bloqueado: bloqueadoOriginal }) => {
+          {episodios.map(({ num, titulo: tituloEp, duracao, thumb, bloqueado: bloqueadoOriginal }) => {
             const liberado = !bloqueadoOriginal || desbloqueados.has(`${drama.id}-${num}`)
             return (
               <div
@@ -151,13 +153,13 @@ export default function Detalhes() {
                     fontSize: 13, fontWeight: 700, marginBottom: 3,
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   }}>
-                    Ep {num}: {titulo}
+                    Ep {num}: {tituloEp[lang]}
                   </div>
                   <div style={{
                     fontSize: 12,
                     color: liberado ? 'var(--cinza-claro)' : 'var(--laranja)',
                   }}>
-                    {duracao} • {liberado ? 'Grátis' : '50 moedas'}
+                    {duracao} • {liberado ? t('detalhes_free') : t('detalhes_locked_price')}
                   </div>
                 </div>
 

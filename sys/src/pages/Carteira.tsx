@@ -1,22 +1,24 @@
 import { Coins, Gem, ShoppingBag, History } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useUser } from '../context/UserContext'
-
-const pacotes: { Icon: LucideIcon; moedas: string; bonus: string; preco: string; popular: boolean }[] = [
-  { Icon: Coins, moedas: '100',  bonus: 'moedas',      preco: 'R$ 9,90',   popular: false },
-  { Icon: Coins, moedas: '500',  bonus: '+50 bônus',   preco: 'R$ 39,90',  popular: true  },
-  { Icon: Coins, moedas: '1000', bonus: '+200 bônus',  preco: 'R$ 79,90',  popular: false },
-  { Icon: Gem,   moedas: '5000', bonus: '+1500 bônus', preco: 'R$ 299,90', popular: false },
-]
+import { useLang } from '../context/LangContext'
 
 export default function Carteira() {
   const { saldo, historico } = useUser()
+  const { t } = useLang()
+
+  const pacotes: { Icon: LucideIcon; moedas: string; bonus: string; preco: string; popular: boolean }[] = [
+    { Icon: Coins, moedas: '100',  bonus: t('wallet_pack_unit'),   preco: 'R$ 9,90',   popular: false },
+    { Icon: Coins, moedas: '500',  bonus: t('wallet_bonus_50'),    preco: 'R$ 39,90',  popular: true  },
+    { Icon: Coins, moedas: '1000', bonus: t('wallet_bonus_200'),   preco: 'R$ 79,90',  popular: false },
+    { Icon: Gem,   moedas: '5000', bonus: t('wallet_bonus_1500'),  preco: 'R$ 299,90', popular: false },
+  ]
 
   return (
     <div className="page">
       <div style={{ padding: '20px var(--page-padding) 8px' }}>
         <h2 style={{ fontSize: 22, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Coins size={22} /> Minha Carteira
+          <Coins size={22} /> {t('wallet_title')}
         </h2>
       </div>
 
@@ -34,17 +36,17 @@ export default function Carteira() {
           background: 'rgba(255,255,255,0.08)', borderRadius: '50%',
         }} />
         <div style={{ fontSize: 12, opacity: 0.9, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
-          Saldo Atual
+          {t('wallet_balance_label')}
         </div>
         <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 54, lineHeight: 1, marginBottom: 4 }}>
           {saldo.toLocaleString('pt-BR')}
         </div>
-        <div style={{ fontSize: 13, opacity: 0.9 }}>moedas DigVue</div>
+        <div style={{ fontSize: 13, opacity: 0.9 }}>{t('wallet_coins_unit')}</div>
       </div>
 
       {/* Pacotes */}
       <h3 style={{ padding: '0 var(--page-padding) 12px', fontSize: 17, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 7 }}>
-        <ShoppingBag size={17} /> Comprar Moedas
+        <ShoppingBag size={17} /> {t('wallet_buy_title')}
       </h3>
       <div style={{ padding: '0 var(--page-padding)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         {pacotes.map(({ Icon, moedas, bonus, preco, popular }) => (
@@ -77,7 +79,7 @@ export default function Carteira() {
 
       {/* Histórico */}
       <h3 style={{ padding: '24px var(--page-padding) 12px', fontSize: 17, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 7 }}>
-        <History size={17} /> Histórico
+        <History size={17} /> {t('wallet_history')}
       </h3>
       <div style={{ padding: '0 var(--page-padding)', display: 'flex', flexDirection: 'column', gap: 8 }}>
         {historico.map(({ info, data, valor, pos }, i) => (

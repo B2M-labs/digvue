@@ -4,12 +4,23 @@ import { Bell, Search, Star, Play, Plus, Flame, Heart, Gem } from 'lucide-react'
 import DramaCard from '../components/DramaCard'
 import Section from '../components/Section'
 import { dramas, categorias } from '../data/dramas'
+import { useLang } from '../context/LangContext'
 
 const destaque = dramas[7]
 
 export default function Home() {
   const [catAtiva, setCatAtiva] = useState('Tudo')
   const navigate = useNavigate()
+  const { lang, t } = useLang()
+
+  const catDisplay: Record<string, string> = {
+    'Tudo':     t('cat_all'),
+    'Romance':  t('cat_romance'),
+    'Drama':    t('cat_drama'),
+    'Comédia':  t('cat_comedy'),
+    'Suspense': t('cat_suspense'),
+    'Família':  t('cat_family'),
+  }
 
   const emAlta = dramas.filter((d) => d.badge === 'EM ALTA' || d.rating >= 4.8).slice(0, 6)
   const romances = dramas.filter((d) => d.categoria === 'Romance')
@@ -81,7 +92,7 @@ export default function Home() {
               cursor: 'pointer',
             }}
           >
-            {cat}
+            {catDisplay[cat] ?? cat}
           </button>
         ))}
       </div>
@@ -120,13 +131,13 @@ export default function Home() {
             alignItems: 'center',
             gap: 4,
           }}>
-            <Star size={10} fill="currentColor" /> Em Alta
+            <Star size={10} fill="currentColor" /> {t('home_trending_badge')}
           </span>
           <h2 style={{ fontSize: 22, fontWeight: 800, lineHeight: 1.15, marginBottom: 4 }}>
-            {destaque.titulo}
+            {destaque.titulo[lang]}
           </h2>
           <p style={{ color: 'var(--cinza-claro)', fontSize: 12, marginBottom: 12 }}>
-            {destaque.episodios} episódios • {destaque.categoria}
+            {destaque.episodios} {t('home_episodes')} • {catDisplay[destaque.categoria] ?? destaque.categoria}
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
             <button
@@ -139,7 +150,7 @@ export default function Home() {
                 cursor: 'pointer',
               }}
             >
-              <Play size={14} fill="currentColor" /> Assistir
+              <Play size={14} fill="currentColor" /> {t('home_watch')}
             </button>
             <button style={{
               padding: '10px 14px',
@@ -149,7 +160,7 @@ export default function Home() {
               display: 'flex', alignItems: 'center', gap: 5,
               cursor: 'pointer',
             }}>
-              <Plus size={14} /> Lista
+              <Plus size={14} /> {t('home_watchlist')}
             </button>
           </div>
         </div>
@@ -158,21 +169,21 @@ export default function Home() {
       {/* Seções filtradas */}
       {catAtiva === 'Tudo' ? (
         <>
-          <Section title={<><Flame size={17} /> Em Alta</>} onVerTudo={() => setCatAtiva('Drama')}>
+          <Section title={<><Flame size={17} /> {t('home_section_trending')}</>} onVerTudo={() => setCatAtiva('Drama')}>
             {emAlta.map((d) => <DramaCard key={d.id} drama={d} />)}
           </Section>
-          <Section title={<><Heart size={17} /> Romance</>} onVerTudo={() => setCatAtiva('Romance')}>
+          <Section title={<><Heart size={17} /> {t('home_section_romance')}</>} onVerTudo={() => setCatAtiva('Romance')}>
             {romances.map((d) => <DramaCard key={d.id} drama={d} />)}
           </Section>
-          <Section title={<><Gem size={17} /> Exclusivo VIP</>}>
+          <Section title={<><Gem size={17} /> {t('home_section_vip')}</>}>
             {dramas.filter((d) => d.badge === 'VIP').map((d) => <DramaCard key={d.id} drama={d} />)}
           </Section>
         </>
       ) : (
-        <Section title={`Resultados: ${catAtiva}`}>
+        <Section title={`${t('home_results_label')}: ${catDisplay[catAtiva] ?? catAtiva}`}>
           {filtrados.length > 0
             ? filtrados.map((d) => <DramaCard key={d.id} drama={d} />)
-            : <p style={{ color: 'var(--cinza-claro)', fontSize: 14, padding: '8px 0' }}>Nenhum drama encontrado.</p>
+            : <p style={{ color: 'var(--cinza-claro)', fontSize: 14, padding: '8px 0' }}>{t('home_no_dramas')}</p>
           }
         </Section>
       )}

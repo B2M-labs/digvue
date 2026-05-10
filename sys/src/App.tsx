@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { UserProvider } from './context/UserContext'
+import { LangProvider } from './context/LangContext'
 import BottomNav from './components/BottomNav'
 import Home      from './pages/Home'
 import Busca     from './pages/Busca'
@@ -11,6 +12,7 @@ import Player    from './pages/Player'
 
 export default function App() {
   return (
+    <LangProvider>
     <UserProvider>
     <BrowserRouter>
       <Routes>
@@ -22,6 +24,7 @@ export default function App() {
       </Routes>
     </BrowserRouter>
     </UserProvider>
+    </LangProvider>
   )
 }
 

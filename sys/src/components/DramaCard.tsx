@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Star } from 'lucide-react'
 import type { Drama } from '../data/dramas'
+import { useLang } from '../context/LangContext'
 
 interface Props {
   drama: Drama
@@ -10,6 +11,7 @@ interface Props {
 
 export default function DramaCard({ drama, width = 130, height = 180 }: Props) {
   const navigate = useNavigate()
+  const { lang, t } = useLang()
 
   return (
     <div
@@ -50,7 +52,7 @@ export default function DramaCard({ drama, width = 130, height = 180 }: Props) {
             letterSpacing: 0.5,
             zIndex: 1,
           }}>
-            {drama.badge}
+            {drama.badge === 'NOVO' ? t('badge_novo') : drama.badge === 'EM ALTA' ? t('badge_trending') : t('badge_vip')}
           </span>
         )}
       </div>
@@ -63,7 +65,7 @@ export default function DramaCard({ drama, width = 130, height = 180 }: Props) {
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
       }}>
-        {drama.titulo}
+        {drama.titulo[lang]}
       </div>
       <div style={{ color: 'var(--cinza-claro)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 3 }}>
         <Star size={11} fill="var(--laranja)" color="var(--laranja)" />

@@ -2,24 +2,35 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Crown, Calendar, Star, Gem, Check } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useLang } from '../context/LangContext'
 
-const beneficios = [
-  'Todos os episódios liberados',
-  'Sem anúncios',
-  'Conteúdo exclusivo',
-  'Qualidade HD',
-  'Download offline',
-]
+type PlanoConfig = { Icon: LucideIcon; id: string; preco: string }
 
-const planos: { Icon: LucideIcon; nome: string; eco: string; preco: string; periodo: string; id: string }[] = [
-  { Icon: Calendar, nome: 'Mensal',    eco: 'Comece agora',     preco: 'R$ 19,90', periodo: '/mês',  id: 'mensal' },
-  { Icon: Star,     nome: 'Anual',     eco: 'Economize 60%!',   preco: 'R$ 99,90', periodo: '/ano',  id: 'anual' },
-  { Icon: Gem,      nome: 'Vitalício', eco: 'Pague uma vez só', preco: 'R$ 299',   periodo: 'único', id: 'vitalicio' },
+const planoConfigs: PlanoConfig[] = [
+  { Icon: Calendar, id: 'mensal',    preco: 'R$ 19,90' },
+  { Icon: Star,     id: 'anual',     preco: 'R$ 99,90' },
+  { Icon: Gem,      id: 'vitalicio', preco: 'R$ 299'   },
 ]
 
 export default function Vip() {
   const [planoSel, setPlanoSel] = useState('anual')
   const navigate = useNavigate()
+  const { t } = useLang()
+
+  const beneficios = [
+    t('vip_benefit_episodes'),
+    t('vip_benefit_ads'),
+    t('vip_benefit_exclusive'),
+    t('vip_benefit_hd'),
+    t('vip_benefit_offline'),
+  ]
+
+  const planos = planoConfigs.map(({ Icon, id, preco }) => ({
+    Icon, id, preco,
+    nome:    t(`vip_plan_${id}_name`),
+    eco:     t(`vip_plan_${id}_eco`),
+    periodo: t(`vip_plan_${id}_period`),
+  }))
 
   return (
     <div className="page">
@@ -32,7 +43,7 @@ export default function Vip() {
             display: 'flex', alignItems: 'center', gap: 6,
           }}
         >
-          <ArrowLeft size={16} /> Voltar
+          <ArrowLeft size={16} /> {t('vip_back')}
         </button>
 
         <div style={{ textAlign: 'center', color: 'var(--laranja)', margin: '12px 0 8px', display: 'flex', justifyContent: 'center' }}>
@@ -44,7 +55,7 @@ export default function Vip() {
           fontSize: 36, letterSpacing: 2, color: 'var(--laranja)', marginBottom: 4,
         }}>DigVue VIP</h1>
         <p style={{ textAlign: 'center', color: 'var(--cinza-claro)', fontSize: 14, marginBottom: 24 }}>
-          Assista tudo sem limites
+          {t('vip_subtitle')}
         </p>
 
         {/* Benefícios */}
@@ -109,10 +120,10 @@ export default function Vip() {
           marginBottom: 12, cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
         }}>
-          Assinar {planos.find((p) => p.id === planoSel)?.nome} VIP <Crown size={16} />
+          {t('vip_subscribe_btn')} {planos.find((p) => p.id === planoSel)?.nome} VIP <Crown size={16} />
         </button>
         <p style={{ textAlign: 'center', color: 'var(--cinza-claro)', fontSize: 11, paddingBottom: 8 }}>
-          Cancele quando quiser. Sem fidelidade.
+          {t('vip_cancel_note')}
         </p>
       </div>
     </div>

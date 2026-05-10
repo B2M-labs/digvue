@@ -1,15 +1,20 @@
 import { NavLink } from 'react-router-dom'
 import { Home, Search, Coins, User } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useLang } from '../context/LangContext'
 
-const items: { to: string; Icon: LucideIcon; label: string }[] = [
-  { to: '/',         Icon: Home,   label: 'Início' },
-  { to: '/busca',    Icon: Search, label: 'Buscar' },
-  { to: '/carteira', Icon: Coins,  label: 'Carteira' },
-  { to: '/perfil',   Icon: User,   label: 'Perfil' },
+type Item = { to: string; Icon: LucideIcon; labelKey: string }
+
+const items: Item[] = [
+  { to: '/',         Icon: Home,   labelKey: 'nav_home'    },
+  { to: '/busca',    Icon: Search, labelKey: 'nav_search'  },
+  { to: '/carteira', Icon: Coins,  labelKey: 'nav_wallet'  },
+  { to: '/perfil',   Icon: User,   labelKey: 'nav_profile' },
 ]
 
 export default function BottomNav() {
+  const { t } = useLang()
+
   return (
     <nav style={{
       position: 'fixed',
@@ -27,7 +32,7 @@ export default function BottomNav() {
       alignItems: 'center',
       zIndex: 100,
     }}>
-      {items.map(({ to, Icon, label }) => (
+      {items.map(({ to, Icon, labelKey }) => (
         <NavLink
           key={to}
           to={to}
@@ -44,7 +49,7 @@ export default function BottomNav() {
           })}
         >
           <Icon size={22} />
-          {label}
+          {t(labelKey)}
         </NavLink>
       ))}
     </nav>

@@ -15,7 +15,8 @@
       "Bash(ls /tmp/ | grep -E \"\\\\.\\(jpg|jpeg|png|gif|webp\\)\" | head -20)",
       "Read(//private/tmp/**)",
       "Bash(find ~/Downloads -newer /tmp -name \"*.jpg\" -o -name \"*.png\" 2>/dev/null | head -10)",
-      "Read(//Users/brunodev/Downloads/**)"
+      "Read(//Users/brunodev/Downloads/**)",
+      "Bash(npx tsc *)"
     ],
     "additionalDirectories": [
       "/Users/brunodev/GitHub/digvue/src",

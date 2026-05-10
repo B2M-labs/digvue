@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useLang } from '../context/LangContext'
 
 interface Props {
   title: ReactNode
@@ -7,6 +8,8 @@ interface Props {
 }
 
 export default function Section({ title, onVerTudo, children }: Props) {
+  const { t } = useLang()
+
   return (
     <div style={{ marginBottom: 28 }}>
       <div style={{
@@ -29,7 +32,7 @@ export default function Section({ title, onVerTudo, children }: Props) {
               cursor: 'pointer',
             }}
           >
-            Ver tudo
+            {t('section_see_all')}
           </button>
         )}
       </div>
