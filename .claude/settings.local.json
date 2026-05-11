@@ -16,7 +16,11 @@
       "Read(//private/tmp/**)",
       "Bash(find ~/Downloads -newer /tmp -name \"*.jpg\" -o -name \"*.png\" 2>/dev/null | head -10)",
       "Read(//Users/brunodev/Downloads/**)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(vercel --version)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ],
     "additionalDirectories": [
       "/Users/brunodev/GitHub/digvue/src",
