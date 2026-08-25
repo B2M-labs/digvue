@@ -5,6 +5,7 @@ import DramaCard from '../components/DramaCard'
 import Section from '../components/Section'
 import { dramas, categorias } from '../data/dramas'
 import { useLang } from '../context/LangContext'
+import { DigVueLogo } from '../components/Logo'
 
 const destaque = dramas[7]
 
@@ -44,15 +45,7 @@ export default function Home() {
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
-        <div style={{
-          fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: 30,
-          letterSpacing: 2,
-          lineHeight: 1,
-        }}>
-          <span style={{ color: 'var(--branco)' }}>Dig</span>
-          <span style={{ color: 'var(--laranja)' }}>Vue</span>
-        </div>
+        <DigVueLogo height={26} tone="dark" />
         <div style={{ display: 'flex', gap: 10 }}>
           <button
             style={{ width: 38, height: 38, background: 'var(--cinza-escuro)', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--branco)', cursor: 'pointer' }}

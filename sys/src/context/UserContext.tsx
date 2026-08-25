@@ -15,6 +15,7 @@ type State = {
 
 type Action =
   | { type: 'GASTAR'; amount: number; descricao: string; data: string }
+  | { type: 'CREDITAR'; amount: number; descricao: string; data: string }
   | { type: 'DESBLOQUEAR'; chave: string }
 
 function reducer(state: State, action: Action): State {
@@ -25,6 +26,15 @@ function reducer(state: State, action: Action): State {
         saldo: state.saldo - action.amount,
         historico: [
           { info: action.descricao, data: action.data, valor: `-${action.amount}`, pos: false },
+          ...state.historico,
+        ],
+      }
+    case 'CREDITAR':
+      return {
+        ...state,
+        saldo: state.saldo + action.amount,
+        historico: [
+          { info: action.descricao, data: action.data, valor: `+${action.amount}`, pos: true },
           ...state.historico,
         ],
       }
@@ -75,7 +85,14 @@ type ContextValue = {
   desbloqueados: Set<string>
   historico: HistoricoItem[]
   gastar: (amount: number, descricao: string) => boolean
+  creditar: (amount: number, descricao: string) => void
   desbloquear: (chave: string) => void
+}
+
+function agoraFormatado(): string {
+  const now = new Date()
+  const hora = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+  return `Hoje • ${hora}`
 }
 
 const UserContext = createContext<ContextValue | null>(null)
@@ -87,10 +104,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   function gastar(amount: number, descricao: string): boolean {
     if (state.saldo < amount) return false
-    const now = new Date()
-    const hora = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
-    dispatch({ type: 'GASTAR', amount, descricao, data: `Hoje • ${hora}` })
+    dispatch({ type: 'GASTAR', amount, descricao, data: agoraFormatado() })
     return true
+  }
+
+  function creditar(amount: number, descricao: string) {
+    if (amount <= 0) return
+    dispatch({ type: 'CREDITAR', amount, descricao, data: agoraFormatado() })
   }
 
   function desbloquear(chave: string) {
@@ -103,6 +123,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       desbloqueados: state.desbloqueados,
       historico: state.historico,
       gastar,
+      creditar,
       desbloquear,
     }}>
       {children}

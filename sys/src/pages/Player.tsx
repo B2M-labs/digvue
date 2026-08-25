@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
-  ArrowLeft, Play, Pause, ShoppingCart, Heart,
+  ArrowLeft, Play, Pause, ShoppingBag, Heart,
   MessageCircle, Share2, Lock, Coins, Tv, Gem,
-  ChevronLeft, ChevronRight, X, ExternalLink,
+  ChevronLeft, ChevronRight, X,
 } from 'lucide-react'
 import { dramas } from '../data/dramas'
 import { getEpisodios } from '../data/episodios'
-import { produtosPorEpisodio } from '../data/produtos'
+import { getProdutos } from '../data/produtos'
 import { useUser } from '../context/UserContext'
 import { useLang } from '../context/LangContext'
+import { useCart } from '../context/CartContext'
+import SceneHotspots from '../components/SceneHotspots'
+import CartSheet from '../components/CartSheet'
+import { VMark } from '../components/Logo'
 
 export default function Player() {
   const { id, ep } = useParams()
@@ -19,6 +23,7 @@ export default function Player() {
 
   const { saldo, desbloqueados, gastar, desbloquear } = useUser()
   const { lang, t } = useLang()
+  const { quantidade } = useCart()
 
   const drama = dramas.find((d) => d.id === id)
   const epNum = Number(ep ?? 1)
@@ -34,10 +39,13 @@ export default function Player() {
   const [curtido, setCurtido] = useState(false)
   const [showControls, setShowControls] = useState(true)
   const [dragging, setDragging] = useState(false)
-  const [showLoja, setShowLoja] = useState(false)
+  const [showCarrinho, setShowCarrinho] = useState(false)
   const [erroMoedas, setErroMoedas] = useState(false)
+  const [dicaVista, setDicaVista] = useState(
+    () => localStorage.getItem('dv_dica_v') === '1'
+  )
 
-  const produtosEp = drama ? (produtosPorEpisodio[`${drama.id}-${epNum}`] ?? []) : []
+  const produtosEp = drama ? getProdutos(drama.id, epNum) : []
 
   // esconde controles após 3s de play (suspende durante drag)
   useEffect(() => {
@@ -108,11 +116,22 @@ export default function Player() {
   }
 
   const sideActions = [
-    { Icon: ShoppingCart, label: t('player_shop_label'), fill: false, action: () => setShowLoja(true) },
-    { Icon: Heart,        label: '12.5K',                fill: curtido, action: () => setCurtido((v) => !v) },
-    { Icon: MessageCircle,label: '348',                  fill: false, action: () => {} },
-    { Icon: Share2,       label: t('player_free'),       fill: false, action: () => {} },
+    {
+      Icon: ShoppingBag,
+      label: quantidade > 0 ? String(quantidade) : t('player_cart_label'),
+      fill: false,
+      badge: quantidade,
+      action: () => setShowCarrinho(true),
+    },
+    { Icon: Heart,         label: '12.5K',          fill: curtido, badge: 0, action: () => setCurtido((v) => !v) },
+    { Icon: MessageCircle, label: '348',            fill: false,   badge: 0, action: () => {} },
+    { Icon: Share2,        label: t('player_free'), fill: false,   badge: 0, action: () => {} },
   ]
+
+  function fecharDica() {
+    setDicaVista(true)
+    localStorage.setItem('dv_dica_v', '1')
+  }
 
   function usarMoedas() {
     const ok = gastar(50, `Ep ${epNum} ${t('player_unlocked_word')} — ${drama?.titulo[lang] ?? ''}`)
@@ -219,14 +238,34 @@ export default function Player() {
           position: 'absolute', right: 14, bottom: 120,
           display: 'flex', flexDirection: 'column', gap: 20, zIndex: 20,
         }} onClick={(e) => e.stopPropagation()}>
-          {sideActions.map(({ Icon, label, fill, action }) => (
+          {sideActions.map(({ Icon, label, fill, badge, action }) => (
             <div
               key={label}
               onClick={action}
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer' }}
             >
-              <div style={{ width: 44, height: 44, background: 'rgba(0,0,0,0.45)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--branco)' }}>
+              <div style={{
+                position: 'relative',
+                width: 44, height: 44,
+                background: badge > 0 ? 'rgba(255,107,26,0.9)' : 'rgba(0,0,0,0.45)',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--branco)',
+                transition: 'background 0.2s',
+              }}>
                 <Icon size={22} fill={fill ? 'currentColor' : 'none'} />
+                {badge > 0 && (
+                  <span style={{
+                    position: 'absolute', top: -3, right: -3,
+                    minWidth: 19, height: 19, padding: '0 5px',
+                    background: 'var(--branco)', color: 'var(--laranja)',
+                    borderRadius: 10, fontSize: 11, fontWeight: 800,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                  }}>
+                    {badge}
+                  </span>
+                )}
               </div>
               <span style={{ fontSize: 11, fontWeight: 700 }}>{label}</span>
             </div>
@@ -307,72 +346,69 @@ export default function Player() {
         </div>
       )}
 
-      {/* ── LOJA DO EPISÓDIO ──────────────────────────────────────── */}
-      {showLoja && produtosEp.length > 0 && (
-        <div
-          style={{ position: 'absolute', inset: 0, zIndex: 50, background: 'rgba(0,0,0,0.6)' }}
-          onClick={() => setShowLoja(false)}
-        >
-          <div
-            style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0,
-              background: '#141414',
-              borderRadius: '20px 20px 0 0',
-              paddingBottom: 32,
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '18px 20px 14px',
-              borderBottom: '1px solid var(--cinza-escuro)',
-            }}>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 800 }}>{t('player_shop_title')}</div>
-                <div style={{ fontSize: 12, color: 'var(--cinza-claro)', marginTop: 2 }}>
-                  {t('player_shop_subtitle')}
-                </div>
-              </div>
-              <button
-                onClick={() => setShowLoja(false)}
-                style={{ background: 'var(--cinza-escuro)', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--branco)', cursor: 'pointer' }}
-              >
-                <X size={16} />
-              </button>
-            </div>
+      {/* ── PRODUTOS DA CENA (marcadores V) ───────────────────────── */}
+      {!bloqueado && (
+        <SceneHotspots
+          produtos={produtosEp}
+          img={episodio.thumb}
+          dramaId={drama.id}
+          dramaTitulo={drama.titulo}
+          ep={epNum}
+          realcar={showControls || !playing}
+        />
+      )}
 
-            <div style={{ display: 'flex', gap: 12, padding: '16px 20px 0', overflowX: 'auto' }}>
-              {produtosEp.map((p) => (
-                <div key={p.url.pt} style={{ flexShrink: 0, width: 140 }}>
-                  <img
-                    src={p.img}
-                    alt={p.titulo[lang]}
-                    style={{ width: 140, height: 140, borderRadius: 12, objectFit: 'cover', display: 'block', background: 'var(--cinza-escuro)' }}
-                  />
-                  <p style={{
-                    fontSize: 12, fontWeight: 600, margin: '8px 0 10px',
-                    lineHeight: 1.4,
-                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                  }}>
-                    {p.titulo[lang]}
-                  </p>
-                  <a
-                    href={p.url[lang]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
-                      padding: '9px 0',
-                      background: 'var(--laranja)', borderRadius: 8,
-                      fontSize: 12, fontWeight: 700, color: 'var(--branco)', textDecoration: 'none',
-                    }}
-                  >
-                    {t('player_buy')} <ExternalLink size={12} />
-                  </a>
-                </div>
-              ))}
+      {/* ── DICA DE PRIMEIRO USO ──────────────────────────────────── */}
+      {!bloqueado && !dicaVista && produtosEp.length > 0 && (
+        <div
+          onClick={(e) => { e.stopPropagation(); fecharDica() }}
+          style={{
+            position: 'absolute', left: 16, right: 16, bottom: 150, zIndex: 45,
+            padding: '14px 16px',
+            background: 'rgba(20,20,20,0.96)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,107,26,0.5)',
+            borderRadius: 16,
+            animation: 'dvSlideUp 0.3s ease-out',
+            boxShadow: '0 14px 36px rgba(0,0,0,0.6)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <div style={{
+              width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+              background: 'rgba(255,107,26,0.16)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <VMark size={17} />
             </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 3 }}>
+                {t('shop_hint_title')}
+              </div>
+              <p style={{ fontSize: 11.5, color: 'var(--cinza-claro)', lineHeight: 1.5 }}>
+                {t('shop_hint_desc')}
+              </p>
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); fecharDica() }}
+              aria-label={t('shop_hint_ok')}
+              style={{
+                background: 'var(--cinza-escuro)', border: 'none', borderRadius: '50%',
+                width: 26, height: 26, flexShrink: 0, cursor: 'pointer',
+                color: 'var(--branco)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <X size={14} />
+            </button>
           </div>
+        </div>
+      )}
+
+      {/* ── CARRINHO + CHECKOUT ───────────────────────────────────── */}
+      {showCarrinho && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <CartSheet onClose={() => setShowCarrinho(false)} />
         </div>
       )}
 

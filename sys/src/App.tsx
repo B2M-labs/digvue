@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { UserProvider } from './context/UserContext'
 import { LangProvider } from './context/LangContext'
+import { CartProvider } from './context/CartContext'
 import BottomNav from './components/BottomNav'
 import Home      from './pages/Home'
 import Busca     from './pages/Busca'
@@ -14,6 +15,7 @@ export default function App() {
   return (
     <LangProvider>
     <UserProvider>
+    <CartProvider>
     <BrowserRouter>
       <Routes>
         {/* Player ocupa tela cheia sem BottomNav */}
@@ -23,6 +25,7 @@ export default function App() {
         <Route path="*" element={<MainLayout />} />
       </Routes>
     </BrowserRouter>
+    </CartProvider>
     </UserProvider>
     </LangProvider>
   )
