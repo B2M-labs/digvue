@@ -4,7 +4,7 @@ import { VMark } from './Logo'
 import { useCart } from '../context/CartContext'
 import { useLang } from '../context/LangContext'
 import { formatMoeda, moedasDeCashback } from '../data/checkout'
-import type { Produto } from '../data/produtos'
+import { visivelEm, type Produto } from '../data/produtos'
 
 type Props = {
   produtos: Produto[]
@@ -15,6 +15,8 @@ type Props = {
   ep: number
   /** marcadores ficam um pouco mais visíveis quando a UI do player está aberta */
   realcar: boolean
+  /** tempo atual do vídeo (segundos) — filtra marcadores por janela de visibilidade */
+  tempoVideo: number
 }
 
 type Toast = { id: string; titulo: string; preco: string; moedas: number }
@@ -24,7 +26,7 @@ type Toast = { id: string; titulo: string; preco: string; moedas: number }
  * logo, discreto, na coordenada do elemento. Um toque adiciona ao carrinho.
  */
 export default function SceneHotspots({
-  produtos, img, dramaId, dramaTitulo, ep, realcar,
+  produtos, img, dramaId, dramaTitulo, ep, realcar, tempoVideo,
 }: Props) {
   const { adicionar, temNoCarrinho } = useCart()
   const { lang, t } = useLang()
@@ -46,6 +48,13 @@ export default function SceneHotspots({
     const timer = setTimeout(() => setAberto(null), 2000)
     return () => clearTimeout(timer)
   }, [aberto])
+
+  const visiveis = produtos.filter((p) => visivelEm(p, tempoVideo))
+
+  // fecha o rótulo se o objeto saiu de quadro (ex: usuário avançou o vídeo)
+  useEffect(() => {
+    if (aberto && !visiveis.some((p) => p.id === aberto)) setAberto(null)
+  }, [aberto, visiveis])
 
   /** Um toque adiciona direto ao carrinho e mostra o que entrou. */
   function onToque(p: Produto) {
@@ -77,6 +86,7 @@ export default function SceneHotspots({
       {/* camada transparente aos cliques, exceto nos marcadores */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 25, pointerEvents: 'none' }}>
         {produtos.map((p) => {
+          const visivelAgora = visivelEm(p, tempoVideo)
           const noCarrinho = temNoCarrinho(p.id)
           const ativo = aberto === p.id
           // rótulo abre para a esquerda quando o marcador está na metade direita
@@ -90,7 +100,9 @@ export default function SceneHotspots({
                 left: `${p.spot.x}%`,
                 top: `${p.spot.y}%`,
                 transform: 'translate(-50%, -50%)',
-                pointerEvents: 'auto',
+                pointerEvents: visivelAgora ? 'auto' : 'none',
+                opacity: visivelAgora ? 1 : 0,
+                transition: 'opacity 0.35s ease',
               }}
             >
               <div

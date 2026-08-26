@@ -11,6 +11,14 @@ export type Produto = {
   spot: { x: number; y: number }
   /** zoom do recorte da cena usado como miniatura do produto (default 260%) */
   zoom?: number
+  /**
+   * Janelas de tempo (em segundos do vídeo) em que o item está de fato
+   * visível naquela coordenada — conferido quadro a quadro contra o vídeo
+   * real, não estimado. Fora dessas janelas o marcador some. Sem essa
+   * lista, o item é tratado como visível o episódio inteiro (cenas
+   * estáticas, câmera fixa).
+   */
+  visivel?: [number, number][]
 }
 
 /**
@@ -33,7 +41,12 @@ export type Produto = {
 export const produtosPorEpisodio: Record<string, Produto[]> = {
   // ── Casamento Falso — ep 1: casal enrolado numa camisa azul, cortina
   // ao fundo (vídeo Pexels 9497521). Único item de vestuário visível é a
-  // própria camisa; sem aliança, vaso ou calça no quadro.
+  // própria camisa; sem aliança, vaso ou calça no quadro. É um plano
+  // dinâmico (câmera na mão) — conferido segundo a segundo (ffmpeg) qual
+  // objeto está de fato na coordenada do marcador em cada trecho:
+  // 0–40s a camisa cobre o ponto com estabilidade; 20–38s a cortina
+  // também fica estável no canto; depois dos 40s a câmera fecha em
+  // rosto/cabelo e nenhum dos dois é visível ali.
   '1-1': [
     {
       id: 'p-cf1-camisa-oxford',
@@ -41,6 +54,7 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
       marca: 'Atelier Norte',
       preco: { pt: 189.9, en: 49.9 },
       spot: { x: 40, y: 78 },
+      visivel: [[0, 40]],
     },
     {
       id: 'p-cf1-cortina',
@@ -48,6 +62,7 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
       marca: 'Casa Vivo',
       preco: { pt: 319.9, en: 84.9 },
       spot: { x: 12, y: 20 },
+      visivel: [[20, 38]],
     },
   ],
 
@@ -73,6 +88,12 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
 
 export function getProdutos(dramaId: string, ep: number): Produto[] {
   return produtosPorEpisodio[`${dramaId}-${ep}`] ?? []
+}
+
+/** Sem `visivel`, o item vale para o episódio inteiro (cena estática). */
+export function visivelEm(produto: Produto, tempo: number): boolean {
+  if (!produto.visivel) return true
+  return produto.visivel.some(([ini, fim]) => tempo >= ini && tempo <= fim)
 }
 
 /**

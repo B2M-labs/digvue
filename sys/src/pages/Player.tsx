@@ -36,6 +36,7 @@ export default function Player() {
 
   const [playing, setPlaying] = useState(false)
   const [progresso, setProgresso] = useState(0)
+  const [tempoVideo, setTempoVideo] = useState(0)
   const [curtido, setCurtido] = useState(false)
   const [showControls, setShowControls] = useState(true)
   const [dragging, setDragging] = useState(false)
@@ -66,6 +67,7 @@ export default function Player() {
       const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
       v.currentTime = frac * v.duration
       setProgresso(frac)
+      setTempoVideo(v.currentTime)
     }
 
     const onMouseMove = (e: MouseEvent) => onMove(e.clientX)
@@ -95,6 +97,7 @@ export default function Player() {
     const v = videoRef.current
     if (!v || !v.duration || dragging) return
     setProgresso(v.currentTime / v.duration)
+    setTempoVideo(v.currentTime)
   }
 
   function startSeek(clientX: number) {
@@ -105,6 +108,7 @@ export default function Player() {
     const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
     v.currentTime = frac * v.duration
     setProgresso(frac)
+    setTempoVideo(v.currentTime)
     setDragging(true)
   }
 
@@ -355,6 +359,7 @@ export default function Player() {
           dramaTitulo={drama.titulo}
           ep={epNum}
           realcar={showControls || !playing}
+          tempoVideo={tempoVideo}
         />
       )}
 
