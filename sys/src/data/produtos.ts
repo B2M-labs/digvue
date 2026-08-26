@@ -42,11 +42,11 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
   // ── Casamento Falso — ep 1: casal enrolado numa camisa azul, cortina
   // ao fundo (vídeo Pexels 9497521). Único item de vestuário visível é a
   // própria camisa; sem aliança, vaso ou calça no quadro. É um plano
-  // dinâmico (câmera na mão) — conferido segundo a segundo (ffmpeg) qual
+  // dinâmico (câmera na mão) — conferido a cada 0.25s (ffmpeg) qual
   // objeto está de fato na coordenada do marcador em cada trecho:
-  // 0–40s a camisa cobre o ponto com estabilidade; 20–38s a cortina
-  // também fica estável no canto; depois dos 40s a câmera fecha em
-  // rosto/cabelo e nenhum dos dois é visível ali.
+  // 0–40s a camisa cobre o ponto com estabilidade; a cortina aparece em
+  // dois trechos estáveis, ~5–10s e 20–38s; depois dos 40s a câmera
+  // fecha em rosto/cabelo e nenhum dos dois é visível ali.
   '1-1': [
     {
       id: 'p-cf1-camisa-oxford',
@@ -62,7 +62,7 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
       marca: 'Casa Vivo',
       preco: { pt: 319.9, en: 84.9 },
       spot: { x: 12, y: 20 },
-      visivel: [[20, 38]],
+      visivel: [[5, 10], [20, 38]],
     },
   ],
 

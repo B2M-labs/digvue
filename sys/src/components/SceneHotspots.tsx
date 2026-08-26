@@ -86,9 +86,12 @@ export default function SceneHotspots({
       {/* camada transparente aos cliques, exceto nos marcadores */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 25, pointerEvents: 'none' }}>
         {produtos.map((p) => {
-          const visivelAgora = visivelEm(p, tempoVideo)
           const noCarrinho = temNoCarrinho(p.id)
           const ativo = aberto === p.id
+          // some para sempre assim que entra no carrinho — só reaparece se
+          // for removido do carrinho. `ativo` mantém o marcador durante a
+          // confirmação de "adicionado", mesmo já estando no carrinho.
+          const visivelAgora = (visivelEm(p, tempoVideo) && !noCarrinho) || ativo
           // rótulo abre para a esquerda quando o marcador está na metade direita
           const paraEsquerda = p.spot.x > 55
 
@@ -121,25 +124,22 @@ export default function SceneHotspots({
                   justifyContent: 'center',
                   borderRadius: '50%',
                   cursor: 'pointer',
-                  background: ativo || noCarrinho
+                  background: ativo
                     ? 'rgba(255,107,26,0.92)'
                     : 'radial-gradient(circle, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0) 72%)',
                   border: ativo
                     ? '1px solid rgba(255,255,255,0.85)'
                     : '1px solid transparent',
-                  opacity: ativo || noCarrinho ? 1 : realcar ? 0.72 : 0.5,
+                  opacity: ativo ? 1 : realcar ? 0.72 : 0.5,
                   transform: ativo ? 'scale(1.12)' : 'scale(1)',
                   transition: 'opacity 0.25s, transform 0.2s, background 0.2s',
-                  animation: ativo || noCarrinho ? 'none' : 'dvBreath 3.4s ease-in-out infinite',
-                  filter: ativo || noCarrinho
+                  animation: ativo ? 'none' : 'dvBreath 3.4s ease-in-out infinite',
+                  filter: ativo
                     ? 'drop-shadow(0 3px 10px rgba(255,107,26,0.55))'
                     : 'drop-shadow(0 1px 3px rgba(0,0,0,0.7))',
                 }}
               >
-                {noCarrinho && !ativo
-                  ? <Check size={15} strokeWidth={3.2} color="#FFFFFF" />
-                  : <VMark size={16} color={ativo ? '#FFFFFF' : 'var(--laranja)'} pupil={ativo ? '#FF6B1A' : '#17334D'} />
-                }
+                <VMark size={16} color={ativo ? '#FFFFFF' : 'var(--laranja)'} pupil={ativo ? '#FF6B1A' : '#17334D'} />
               </div>
 
               {/* rótulo de confirmação — mostra o que acabou de entrar no carrinho */}
