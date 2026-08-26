@@ -71,7 +71,7 @@ export default function Busca() {
               border: '2px solid transparent',
               borderRadius: 12,
               color: 'var(--branco)',
-              fontSize: 15,
+              fontSize: 16,
             }}
           />
         </div>

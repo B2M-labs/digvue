@@ -890,7 +890,10 @@ function input(erro: boolean): CSSProperties {
     border: `1px solid ${erro ? '#f87171' : 'var(--cinza-medio)'}`,
     borderRadius: 9,
     color: 'var(--branco)',
-    fontSize: 13,
+    // 16px é o mínimo que evita o zoom automático do Safari/Chrome no
+    // iOS ao focar um campo — abaixo disso o navegador dá zoom na página
+    // inteira e não estava voltando, o que quebrava a responsividade.
+    fontSize: 16,
     outline: 'none',
   }
 }
