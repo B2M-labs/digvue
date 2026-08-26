@@ -213,36 +213,36 @@ export default function Checkout({
         {/* ── topo ──────────────────────────────────────────────────── */}
         {etapa !== 'processando' && (
           <div style={{
-            display: 'flex', alignItems: 'center', gap: 12,
-            padding: 'calc(14px + env(safe-area-inset-top)) 16px 14px',
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: 'calc(10px + env(safe-area-inset-top)) 14px 10px',
             borderBottom: '1px solid var(--cinza-escuro)',
             flexShrink: 0,
           }}>
             {etapa !== 'sucesso' && (
               <button onClick={voltar} aria-label={t('co_back')} style={iconBtn}>
-                <ArrowLeft size={17} />
+                <ArrowLeft size={15} />
               </button>
             )}
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 15, fontWeight: 800 }}>
+              <div style={{ fontSize: 14, fontWeight: 800 }}>
                 {etapa === 'sucesso' ? t('co_ok_header') : t('co_title')}
               </div>
               {emFormulario && (
-                <div style={{ fontSize: 11, color: 'var(--cinza-claro)', marginTop: 1 }}>
+                <div style={{ fontSize: 10.5, color: 'var(--cinza-claro)', marginTop: 1 }}>
                   {t('co_step_of').replace('{a}', String(passoAtual + 1)).replace('{b}', '4')} •{' '}
                   {t(`co_step_${etapa}`)}
                 </div>
               )}
             </div>
             <button onClick={onClose} aria-label={t('co_close')} style={iconBtn}>
-              <X size={17} />
+              <X size={15} />
             </button>
           </div>
         )}
 
         {/* ── barra de progresso ────────────────────────────────────── */}
         {emFormulario && (
-          <div style={{ display: 'flex', gap: 4, padding: '12px 16px 0', flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 4, padding: '10px 14px 0', flexShrink: 0 }}>
             {ORDEM.map((p, i) => (
               <div
                 key={p}
@@ -256,7 +256,7 @@ export default function Checkout({
           </div>
         )}
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '18px 16px 24px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 20px' }}>
           {/* ── 1. CONTATO ─────────────────────────────────────────── */}
           {etapa === 'contato' && (
             <>
@@ -423,7 +423,7 @@ export default function Checkout({
                 </div>
               </div>
 
-              <div style={{ fontSize: 12, fontWeight: 700, margin: '8px 0 8px' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, margin: '6px 0 7px' }}>
                 {t('co_shipping_method')}
               </div>
               {fretes.map((f) => {
@@ -433,27 +433,27 @@ export default function Checkout({
                     key={f.id}
                     onClick={() => set('frete', f.id)}
                     style={{
-                      width: '100%', marginBottom: 8, padding: 13,
+                      width: '100%', marginBottom: 7, padding: 11,
                       background: sel ? 'rgba(255,107,26,0.1)' : 'var(--cinza-escuro)',
                       border: `1px solid ${sel ? 'var(--laranja)' : 'transparent'}`,
-                      borderRadius: 12, cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', gap: 11, textAlign: 'left',
+                      borderRadius: 11, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left',
                       color: 'var(--branco)',
                     }}
                   >
                     <div style={{ color: sel ? 'var(--laranja)' : 'var(--cinza-claro)' }}>
-                      {f.id === 'padrao' ? <Truck size={18} /> : <Zap size={18} />}
+                      {f.id === 'padrao' ? <Truck size={16} /> : <Zap size={16} />}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700 }}>
                         {t(f.id === 'padrao' ? 'co_ship_standard' : 'co_ship_express')}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--cinza-claro)', marginTop: 2 }}>
+                      <div style={{ fontSize: 10.5, color: 'var(--cinza-claro)', marginTop: 1 }}>
                         {previsaoEntrega(f.dias, lang)}
                       </div>
                     </div>
                     <div style={{
-                      fontSize: 13, fontWeight: 800,
+                      fontSize: 12, fontWeight: 800,
                       color: f.preco === 0 ? '#4ade80' : 'var(--branco)',
                     }}>
                       {f.preco === 0 ? t('co_ship_free') : formatMoeda(f.preco, lang)}
@@ -470,7 +470,7 @@ export default function Checkout({
               <Cabecalho Icon={CreditCard} titulo={t('co_pay_title')} desc={t('co_pay_desc')} />
 
               {brasil && (
-                <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                <div style={{ display: 'flex', gap: 7, marginBottom: 13 }}>
                   {(['cartao', 'pix'] as const).map((m) => {
                     const sel = form.metodo === m
                     return (
@@ -478,15 +478,15 @@ export default function Checkout({
                         key={m}
                         onClick={() => set('metodo', m)}
                         style={{
-                          flex: 1, padding: '11px 8px',
+                          flex: 1, padding: '10px 8px',
                           background: sel ? 'var(--laranja)' : 'var(--cinza-escuro)',
-                          border: 'none', borderRadius: 10,
-                          color: 'var(--branco)', fontSize: 13, fontWeight: 700,
+                          border: 'none', borderRadius: 9,
+                          color: 'var(--branco)', fontSize: 12, fontWeight: 700,
                           cursor: 'pointer',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
                         }}
                       >
-                        {m === 'cartao' ? <CreditCard size={15} /> : <QrCode size={15} />}
+                        {m === 'cartao' ? <CreditCard size={14} /> : <QrCode size={14} />}
                         {t(m === 'cartao' ? 'co_pay_card' : 'co_pay_pix')}
                       </button>
                     )
@@ -663,8 +663,8 @@ export default function Checkout({
               </Bloco>
 
               <div style={{
-                background: 'var(--cinza-escuro)', borderRadius: 14,
-                padding: 14, marginBottom: 14,
+                background: 'var(--cinza-escuro)', borderRadius: 12,
+                padding: 12, marginBottom: 12,
               }}>
                 <Total label={t('co_sum_items')} valor={formatMoeda(valorItens, lang)} />
                 <Total
@@ -672,10 +672,10 @@ export default function Checkout({
                   valor={custoFrete === 0 ? t('co_ship_free') : formatMoeda(custoFrete, lang)}
                   verde={custoFrete === 0}
                 />
-                <div style={{ height: 1, background: 'var(--cinza-medio)', margin: '10px 0' }} />
+                <div style={{ height: 1, background: 'var(--cinza-medio)', margin: '8px 0' }} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <span style={{ fontSize: 14, fontWeight: 800 }}>{t('co_sum_total')}</span>
-                  <span style={{ fontSize: 24, fontWeight: 800 }}>{formatMoeda(total, lang)}</span>
+                  <span style={{ fontSize: 13, fontWeight: 800 }}>{t('co_sum_total')}</span>
+                  <span style={{ fontSize: 21, fontWeight: 800 }}>{formatMoeda(total, lang)}</span>
                 </div>
               </div>
 
@@ -690,7 +690,7 @@ export default function Checkout({
               display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center', gap: 26,
             }}>
-              <div style={{ position: 'relative', width: 72, height: 72 }}>
+              <div style={{ position: 'relative', width: 60, height: 60 }}>
                 <div style={{
                   position: 'absolute', inset: 0,
                   border: '3px solid var(--cinza-escuro)',
@@ -702,7 +702,7 @@ export default function Checkout({
                   position: 'absolute', inset: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <VMark size={26} />
+                  <VMark size={22} />
                 </div>
               </div>
 
@@ -744,20 +744,20 @@ export default function Checkout({
 
           {/* ── SUCESSO ────────────────────────────────────────────── */}
           {etapa === 'sucesso' && pedido && (
-            <div style={{ textAlign: 'center', paddingTop: 12 }}>
+            <div style={{ textAlign: 'center', paddingTop: 8 }}>
               <div style={{
-                width: 76, height: 76, borderRadius: '50%',
+                width: 64, height: 64, borderRadius: '50%',
                 background: 'rgba(74,222,128,0.14)',
                 border: '2px solid #4ade80',
-                margin: '0 auto 18px',
+                margin: '0 auto 14px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 animation: 'dvPop 0.35s ease-out',
               }}>
-                <Check size={38} strokeWidth={3} color="#4ade80" />
+                <Check size={32} strokeWidth={3} color="#4ade80" />
               </div>
 
-              <h3 style={{ fontSize: 21, fontWeight: 800, marginBottom: 7 }}>{t('co_ok_title')}</h3>
-              <p style={{ fontSize: 13, color: 'var(--cinza-claro)', lineHeight: 1.55, marginBottom: 20 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 6 }}>{t('co_ok_title')}</h3>
+              <p style={{ fontSize: 12, color: 'var(--cinza-claro)', lineHeight: 1.5, marginBottom: 16 }}>
                 {t('co_ok_desc').replace('{email}', pedido.email)}
               </p>
 
@@ -765,24 +765,24 @@ export default function Checkout({
               <div style={{
                 background: 'linear-gradient(135deg, rgba(74,222,128,0.14), rgba(74,222,128,0.04))',
                 border: '1px solid rgba(74,222,128,0.4)',
-                borderRadius: 16, padding: 18, marginBottom: 14,
+                borderRadius: 14, padding: 14, marginBottom: 12,
               }}>
                 <div style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  gap: 8, marginBottom: 6,
+                  gap: 7, marginBottom: 5,
                 }}>
-                  <Coins size={20} color="#4ade80" />
+                  <Coins size={18} color="#4ade80" />
                   <span style={{
-                    fontFamily: "'Bebas Neue', sans-serif", fontSize: 40,
+                    fontFamily: "'Bebas Neue', sans-serif", fontSize: 32,
                     lineHeight: 1, color: '#4ade80',
                   }}>
                     +{pedido.moedas}
                   </span>
                 </div>
-                <div style={{ fontSize: 12.5, fontWeight: 700, marginBottom: 4 }}>
+                <div style={{ fontSize: 11.5, fontWeight: 700, marginBottom: 3 }}>
                   {t('co_ok_coins')}
                 </div>
-                <div style={{ fontSize: 11.5, color: 'var(--cinza-claro)', lineHeight: 1.5 }}>
+                <div style={{ fontSize: 10.5, color: 'var(--cinza-claro)', lineHeight: 1.45 }}>
                   {(() => {
                     const { inteiros, resto } = episodiosDeMoedas(pedido.moedas)
                     return inteiros >= 1
@@ -795,8 +795,8 @@ export default function Checkout({
 
               {/* resumo do pedido */}
               <div style={{
-                background: 'var(--cinza-escuro)', borderRadius: 14,
-                padding: 14, marginBottom: 18, textAlign: 'left',
+                background: 'var(--cinza-escuro)', borderRadius: 12,
+                padding: 12, marginBottom: 14, textAlign: 'left',
               }}>
                 <Total label={t('co_ok_order')} valor={pedido.numero} />
                 <Total label={t('co_sum_total')} valor={formatMoeda(pedido.total, lang)} />
@@ -804,27 +804,27 @@ export default function Checkout({
                 <Total label={t('co_review_pay')} valor={pedido.pagamento} />
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <button
                   onClick={() => { onClose(); navigate('/carteira') }}
                   style={{
-                    padding: 14, background: 'var(--laranja)', border: 'none', borderRadius: 12,
-                    color: 'var(--branco)', fontSize: 14, fontWeight: 800, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                    padding: 13, background: 'var(--laranja)', border: 'none', borderRadius: 11,
+                    color: 'var(--branco)', fontSize: 13.5, fontWeight: 800, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   }}
                 >
-                  <Coins size={16} /> {t('co_ok_wallet')}
+                  <Coins size={15} /> {t('co_ok_wallet')}
                 </button>
                 <button
                   onClick={onClose}
                   style={{
-                    padding: 14, background: 'var(--cinza-escuro)',
-                    border: '1px solid var(--cinza-medio)', borderRadius: 12,
-                    color: 'var(--branco)', fontSize: 14, fontWeight: 700, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                    padding: 13, background: 'var(--cinza-escuro)',
+                    border: '1px solid var(--cinza-medio)', borderRadius: 11,
+                    color: 'var(--branco)', fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   }}
                 >
-                  <PartyPopper size={16} /> {t('co_ok_keep_watching')}
+                  <PartyPopper size={15} /> {t('co_ok_keep_watching')}
                 </button>
               </div>
             </div>
@@ -835,17 +835,17 @@ export default function Checkout({
         {emFormulario && (
           <div style={{
             flexShrink: 0,
-            padding: '12px 16px calc(16px + env(safe-area-inset-bottom))',
+            padding: '10px 14px calc(14px + env(safe-area-inset-bottom))',
             borderTop: '1px solid var(--cinza-escuro)',
             background: 'var(--preto-suave)',
           }}>
             {etapa !== 'revisao' && (
               <div style={{
                 display: 'flex', justifyContent: 'space-between',
-                fontSize: 12, color: 'var(--cinza-claro)', marginBottom: 10,
+                fontSize: 11.5, color: 'var(--cinza-claro)', marginBottom: 8,
               }}>
                 <span>{t('co_sum_total')}</span>
-                <span style={{ fontWeight: 800, color: 'var(--branco)', fontSize: 15 }}>
+                <span style={{ fontWeight: 800, color: 'var(--branco)', fontSize: 14 }}>
                   {formatMoeda(total, lang)}
                 </span>
               </div>
@@ -853,15 +853,15 @@ export default function Checkout({
             <button
               onClick={avancar}
               style={{
-                width: '100%', padding: 15,
-                background: 'var(--laranja)', border: 'none', borderRadius: 13,
-                color: 'var(--branco)', fontSize: 15, fontWeight: 800, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                width: '100%', padding: 13,
+                background: 'var(--laranja)', border: 'none', borderRadius: 12,
+                color: 'var(--branco)', fontSize: 14, fontWeight: 800, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
                 boxShadow: '0 8px 22px rgba(255,107,26,0.3)',
               }}
             >
               {etapa === 'revisao'
-                ? <><Lock size={15} /> {t('co_pay_now').replace('{valor}', formatMoeda(total, lang))}</>
+                ? <><Lock size={14} /> {t('co_pay_now').replace('{valor}', formatMoeda(total, lang))}</>
                 : t('co_continue')}
             </button>
           </div>
@@ -876,7 +876,7 @@ export default function Checkout({
    ──────────────────────────────────────────────────────────────────────────── */
 
 const iconBtn: CSSProperties = {
-  width: 32, height: 32, flexShrink: 0,
+  width: 28, height: 28, flexShrink: 0,
   background: 'var(--cinza-escuro)', border: 'none', borderRadius: '50%',
   color: 'var(--branco)', cursor: 'pointer',
   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -885,12 +885,12 @@ const iconBtn: CSSProperties = {
 function input(erro: boolean): CSSProperties {
   return {
     width: '100%',
-    padding: '12px 13px',
+    padding: '10px 11px',
     background: 'var(--cinza-escuro)',
     border: `1px solid ${erro ? '#f87171' : 'var(--cinza-medio)'}`,
-    borderRadius: 10,
+    borderRadius: 9,
     color: 'var(--branco)',
-    fontSize: 14,
+    fontSize: 13,
     outline: 'none',
   }
 }
@@ -899,12 +899,12 @@ function Cabecalho({
   Icon, titulo, desc,
 }: { Icon: typeof Mail; titulo: string; desc: string }) {
   return (
-    <div style={{ marginBottom: 18 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 5 }}>
-        <Icon size={18} color="var(--laranja)" />
-        <span style={{ fontSize: 16, fontWeight: 800 }}>{titulo}</span>
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
+        <Icon size={16} color="var(--laranja)" />
+        <span style={{ fontSize: 14.5, fontWeight: 800 }}>{titulo}</span>
       </div>
-      <p style={{ fontSize: 12.5, color: 'var(--cinza-claro)', lineHeight: 1.5 }}>{desc}</p>
+      <p style={{ fontSize: 11.5, color: 'var(--cinza-claro)', lineHeight: 1.45 }}>{desc}</p>
     </div>
   )
 }
@@ -919,10 +919,10 @@ function Campo({
   children: ReactNode
 }) {
   return (
-    <div style={{ marginBottom: 13 }}>
+    <div style={{ marginBottom: 10 }}>
       <label style={{
-        display: 'block', fontSize: 11.5, fontWeight: 700,
-        color: 'var(--cinza-claro)', marginBottom: 6,
+        display: 'block', fontSize: 10.5, fontWeight: 700,
+        color: 'var(--cinza-claro)', marginBottom: 5,
         textTransform: 'uppercase', letterSpacing: 0.5,
       }}>
         {label}
@@ -930,19 +930,19 @@ function Campo({
       {children}
       {erro && (
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 5,
-          fontSize: 11, color: '#f87171', marginTop: 5, fontWeight: 600,
+          display: 'flex', alignItems: 'center', gap: 4,
+          fontSize: 10.5, color: '#f87171', marginTop: 4, fontWeight: 600,
         }}>
-          <AlertCircle size={12} /> {erro}
+          <AlertCircle size={11} /> {erro}
         </div>
       )}
       {!erro && dica && (
         <div style={{
-          fontSize: 11, marginTop: 5,
+          fontSize: 10.5, marginTop: 4,
           color: dicaOk ? '#4ade80' : 'var(--cinza-claro)',
-          display: 'flex', alignItems: 'center', gap: 5,
+          display: 'flex', alignItems: 'center', gap: 4,
         }}>
-          {dicaOk && <Check size={12} strokeWidth={3} />} {dica}
+          {dicaOk && <Check size={11} strokeWidth={3} />} {dica}
         </div>
       )}
     </div>
@@ -959,15 +959,15 @@ function Bloco({
 }) {
   return (
     <div style={{
-      background: 'var(--cinza-escuro)', borderRadius: 14,
-      padding: 14, marginBottom: 10,
+      background: 'var(--cinza-escuro)', borderRadius: 12,
+      padding: 12, marginBottom: 9,
     }}>
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: 7,
       }}>
         <span style={{
-          fontSize: 10.5, fontWeight: 800, color: 'var(--cinza-claro)',
+          fontSize: 10, fontWeight: 800, color: 'var(--cinza-claro)',
           textTransform: 'uppercase', letterSpacing: 0.7,
         }}>
           {titulo}
@@ -977,7 +977,7 @@ function Bloco({
             onClick={onEditar}
             style={{
               background: 'none', border: 'none', cursor: 'pointer',
-              color: 'var(--laranja)', fontSize: 11.5, fontWeight: 700, padding: 0,
+              color: 'var(--laranja)', fontSize: 11, fontWeight: 700, padding: 0,
             }}
           >
             {editarLabel}
@@ -992,7 +992,7 @@ function Bloco({
 function Linha({ valor, destaque }: { valor: string; destaque?: boolean }) {
   return (
     <div style={{
-      fontSize: 12.5, lineHeight: 1.6,
+      fontSize: 12, lineHeight: 1.55,
       color: destaque ? 'var(--laranja)' : 'rgba(255,255,255,0.86)',
       fontWeight: destaque ? 700 : 500,
     }}>
@@ -1005,7 +1005,7 @@ function Total({ label, valor, verde }: { label: string; valor: string; verde?: 
   return (
     <div style={{
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      padding: '4px 0', fontSize: 12.5,
+      padding: '3px 0', fontSize: 12,
     }}>
       <span style={{ color: 'var(--cinza-claro)' }}>{label}</span>
       <span style={{ fontWeight: 700, color: verde ? '#4ade80' : 'var(--branco)' }}>{valor}</span>
@@ -1017,18 +1017,18 @@ function CashbackBox({ moedas, t }: { moedas: number; t: (k: string) => string }
   const { inteiros } = episodiosDeMoedas(moedas)
   return (
     <div style={{
-      display: 'flex', alignItems: 'center', gap: 11,
-      padding: 13,
+      display: 'flex', alignItems: 'center', gap: 10,
+      padding: 12,
       background: 'rgba(74,222,128,0.09)',
       border: '1px solid rgba(74,222,128,0.3)',
-      borderRadius: 13,
+      borderRadius: 12,
     }}>
-      <Coins size={20} color="#4ade80" style={{ flexShrink: 0 }} />
-      <div style={{ fontSize: 12, lineHeight: 1.5 }}>
+      <Coins size={18} color="#4ade80" style={{ flexShrink: 0 }} />
+      <div style={{ fontSize: 11.5, lineHeight: 1.45 }}>
         <div style={{ fontWeight: 800, color: '#4ade80', marginBottom: 2 }}>
           {t('co_sum_coins').replace('{n}', String(moedas))}
         </div>
-        <div style={{ color: 'var(--cinza-claro)', fontSize: 11 }}>
+        <div style={{ color: 'var(--cinza-claro)', fontSize: 10.5 }}>
           {inteiros >= 1
             ? t('cart_coins_eps').replace('{n}', String(inteiros))
             : t('cart_coins_hint')}
@@ -1048,43 +1048,43 @@ function CartaoVisual({
   return (
     <div style={{
       background: 'linear-gradient(135deg, #1F2933 0%, #17334D 55%, #0F1A26 100%)',
-      borderRadius: 16, padding: 18, marginBottom: 18,
-      boxShadow: '0 12px 30px rgba(0,0,0,0.45)',
+      borderRadius: 14, padding: 14, marginBottom: 14,
+      boxShadow: '0 10px 24px rgba(0,0,0,0.4)',
       position: 'relative', overflow: 'hidden',
     }}>
       <div style={{
-        position: 'absolute', top: -30, right: -30,
-        width: 130, height: 130, borderRadius: '50%',
+        position: 'absolute', top: -26, right: -26,
+        width: 110, height: 110, borderRadius: '50%',
         background: 'rgba(255,107,26,0.14)',
       }} />
       <div style={{
         display: 'flex', justifyContent: 'space-between',
-        alignItems: 'flex-start', marginBottom: 22,
+        alignItems: 'flex-start', marginBottom: 16,
       }}>
-        <div style={{ width: 38, height: 27, borderRadius: 5, background: 'linear-gradient(135deg,#E8C46B,#B8912F)' }} />
-        <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--laranja)', letterSpacing: 0.5 }}>
+        <div style={{ width: 32, height: 23, borderRadius: 4, background: 'linear-gradient(135deg,#E8C46B,#B8912F)' }} />
+        <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--laranja)', letterSpacing: 0.5 }}>
           {NOME_BANDEIRA[bandeira]}
         </span>
       </div>
       <div style={{
-        fontFamily: 'ui-monospace, monospace', fontSize: 17,
-        letterSpacing: 1.6, marginBottom: 16, color: 'rgba(255,255,255,0.94)',
+        fontFamily: 'ui-monospace, monospace', fontSize: 15,
+        letterSpacing: 1.3, marginBottom: 12, color: 'rgba(255,255,255,0.94)',
       }}>
         {grupos}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 10 }}>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ fontSize: 8.5, color: 'rgba(255,255,255,0.5)', letterSpacing: 0.8, marginBottom: 3 }}>
+          <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.5)', letterSpacing: 0.7, marginBottom: 2 }}>
             {placeholderNome.toUpperCase()}
           </div>
           <div style={{
-            fontSize: 11.5, fontWeight: 700, letterSpacing: 0.6,
+            fontSize: 10.5, fontWeight: 700, letterSpacing: 0.5,
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
             {nome || '—'}
           </div>
         </div>
-        <div style={{ fontSize: 11.5, fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}>
+        <div style={{ fontSize: 10.5, fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}>
           {validade || 'MM/AA'}
         </div>
       </div>
@@ -1109,30 +1109,30 @@ function Pix({
   return (
     <div style={{ textAlign: 'center' }}>
       <div style={{
-        background: '#FFFFFF', borderRadius: 14, padding: 14,
-        width: 'fit-content', margin: '0 auto 14px',
+        background: '#FFFFFF', borderRadius: 12, padding: 11,
+        width: 'fit-content', margin: '0 auto 12px',
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${grade.length}, 7px)`,
+          gridTemplateColumns: `repeat(${grade.length}, 6px)`,
           gap: 0,
         }}>
           {grade.flatMap((linha, y) =>
             linha.map((preenchido, x) => (
               <div
                 key={`${y}-${x}`}
-                style={{ width: 7, height: 7, background: preenchido ? '#0A0A0A' : '#FFFFFF' }}
+                style={{ width: 6, height: 6, background: preenchido ? '#0A0A0A' : '#FFFFFF' }}
               />
             ))
           )}
         </div>
       </div>
 
-      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{t('co_pix_title')}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--laranja)', marginBottom: 6 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 3 }}>{t('co_pix_title')}</div>
+      <div style={{ fontSize: 19, fontWeight: 800, color: 'var(--laranja)', marginBottom: 5 }}>
         {formatMoeda(valor, lang)}
       </div>
-      <p style={{ fontSize: 11.5, color: 'var(--cinza-claro)', lineHeight: 1.5, marginBottom: 14 }}>
+      <p style={{ fontSize: 10.5, color: 'var(--cinza-claro)', lineHeight: 1.45, marginBottom: 12 }}>
         {t('co_pix_desc')}
       </p>
 
@@ -1142,15 +1142,15 @@ function Pix({
           onCopiar()
         }}
         style={{
-          width: '100%', padding: 12,
+          width: '100%', padding: 11,
           background: copiado ? 'rgba(74,222,128,0.16)' : 'var(--cinza-escuro)',
           border: `1px solid ${copiado ? '#4ade80' : 'var(--cinza-medio)'}`,
-          borderRadius: 11, color: copiado ? '#4ade80' : 'var(--branco)',
-          fontSize: 13, fontWeight: 700, cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+          borderRadius: 10, color: copiado ? '#4ade80' : 'var(--branco)',
+          fontSize: 12, fontWeight: 700, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
         }}
       >
-        {copiado ? <><Check size={15} /> {t('co_pix_copied')}</> : <><Copy size={15} /> {t('co_pix_copy')}</>}
+        {copiado ? <><Check size={14} /> {t('co_pix_copied')}</> : <><Copy size={14} /> {t('co_pix_copy')}</>}
       </button>
     </div>
   )
