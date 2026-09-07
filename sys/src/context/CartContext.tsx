@@ -78,9 +78,13 @@ function reducer(state: State, action: Action): State {
 }
 
 function loadState(): State {
+  // o carrinho nunca é restaurado — cada vez que a página abre, o usuário
+  // começa do zero para poder ver o fluxo de compra completo sempre.
+  // pedidos (histórico de compras) continuam salvos normalmente.
   try {
+    localStorage.removeItem('dv_cart')
     return {
-      itens: JSON.parse(localStorage.getItem('dv_cart') ?? '[]'),
+      itens: [],
       pedidos: JSON.parse(localStorage.getItem('dv_pedidos') ?? '[]'),
     }
   } catch {
@@ -108,9 +112,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, undefined, loadState)
 
   useEffect(() => {
-    localStorage.setItem('dv_cart', JSON.stringify(state.itens))
     localStorage.setItem('dv_pedidos', JSON.stringify(state.pedidos))
-  }, [state])
+  }, [state.pedidos])
 
   const value = useMemo<ContextValue>(() => ({
     itens: state.itens,

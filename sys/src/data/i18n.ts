@@ -102,10 +102,19 @@ export const i18n: Record<Lang, Record<string, string>> = {
     section_see_all: 'Ver tudo',
 
     shop_hint_title: 'Compre o que você vê',
-    shop_hint_desc: 'Toque no ícone V discreto sobre os itens da cena — roupas, decoração, acessórios — para adicionar direto ao carrinho.',
+    shop_hint_desc: 'Toque no V no topo da tela pra ver os produtos dessa cena — roupas, decoração, acessórios — e adicionar ao carrinho em um toque.',
     shop_hint_ok: 'Entendi',
     shop_added: 'Adicionado',
     shop_coins_back: 'moedas de volta',
+    shop_list_title: 'Produtos desta cena',
+    shop_add_btn: 'Adicionar',
+    shop_in_cart: 'No carrinho',
+    shop_coins_note: 'Cada compra gera 1% de volta em moedas para liberar episódios.',
+
+    co_saved_title: 'Compra mais rápida',
+    co_saved_desc: 'Encontramos dados salvos no seu cadastro. Quer usar essas informações e pular o preenchimento?',
+    co_saved_yes: 'Sim, usar meus dados',
+    co_saved_no: 'Não, prefiro preencher',
 
     cart_title: 'Carrinho',
     cart_item: 'item',
@@ -331,10 +340,19 @@ export const i18n: Record<Lang, Record<string, string>> = {
     section_see_all: 'See all',
 
     shop_hint_title: 'Shop what you see',
-    shop_hint_desc: 'Tap the discreet V icon on scene items — outfits, decor, accessories — to add them straight to your cart.',
+    shop_hint_desc: 'Tap the V at the top of the screen to see the products in this scene — outfits, decor, accessories — and add them to your cart in one tap.',
     shop_hint_ok: 'Got it',
     shop_added: 'Added',
     shop_coins_back: 'coins back',
+    shop_list_title: 'Products in this scene',
+    shop_add_btn: 'Add',
+    shop_in_cart: 'In cart',
+    shop_coins_note: 'Every purchase earns 1% back in coins to unlock episodes.',
+
+    co_saved_title: 'Faster checkout',
+    co_saved_desc: "We found saved details on your account. Want to use them and skip the form?",
+    co_saved_yes: 'Yes, use my info',
+    co_saved_no: "No, I'll fill it in",
 
     cart_title: 'Cart',
     cart_item: 'item',

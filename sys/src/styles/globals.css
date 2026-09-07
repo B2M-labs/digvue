@@ -55,6 +55,27 @@ a      { color: inherit; text-decoration: none; }
   100% { transform: translateX(200%); }
 }
 
+@keyframes dvSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dvSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes dvPop {
+  0%   { opacity: 0; transform: scale(0.82); }
+  60%  { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes dvBreath {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50%      { transform: scale(1.1); opacity: 1; }
+}
+
 .page {
   animation: fadeIn 0.3s ease;
   padding-bottom: calc(var(--nav-height) + 16px);

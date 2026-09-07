@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, X, Check, Loader2, Mail, MapPin, CreditCard, ClipboardCheck,
   Coins, ShieldCheck, Truck, Zap, Copy, QrCode, Lock, PartyPopper, AlertCircle,
+  UserCheck, PencilLine,
 } from 'lucide-react'
 import { useCart, type CartItem, type Pedido } from '../context/CartContext'
 import { useUser } from '../context/UserContext'
@@ -19,7 +20,7 @@ import {
   pixCopiaECola, gradeQr, type Frete,
 } from '../data/checkout'
 
-type Etapa = 'contato' | 'entrega' | 'pagamento' | 'revisao' | 'processando' | 'sucesso'
+type Etapa = 'inicio' | 'contato' | 'entrega' | 'pagamento' | 'revisao' | 'processando' | 'sucesso'
 
 const ORDEM: Etapa[] = ['contato', 'entrega', 'pagamento', 'revisao']
 
@@ -51,6 +52,33 @@ const FORM_VAZIO: Form = {
   cartaoNumero: '', cartaoNome: '', cartaoValidade: '', cartaoCvv: '', parcelas: 1,
 }
 
+/**
+ * Dados de cadastro salvos do usuário (mock — não há backend/login real
+ * nesta demo). Mesma identidade usada em Perfil.tsx ("Maria Silva"), com
+ * endereço e telefone adaptados ao país do idioma selecionado. Usado no
+ * atalho "usar informações do cadastro" para pular o preenchimento manual.
+ */
+const PERFIL_SALVO: Record<'pt' | 'en', Form> = {
+  pt: {
+    email: 'maria.silva@email.com', nome: 'Maria Silva',
+    telefone: '(11) 98877-6655', cpf: '390.533.447-05',
+    cep: '01310-100', rua: 'Avenida Paulista', numero: '900',
+    complemento: 'Apto 122', bairro: 'Bela Vista', cidade: 'São Paulo', estado: 'SP',
+    frete: 'padrao', metodo: 'cartao',
+    cartaoNumero: '4242 4242 4242 4242', cartaoNome: 'MARIA SILVA',
+    cartaoValidade: '12/29', cartaoCvv: '123', parcelas: 1,
+  },
+  en: {
+    email: 'maria.silva@email.com', nome: 'Maria Silva',
+    telefone: '(212) 555-0148', cpf: '',
+    cep: '10001', rua: '350 5th Ave', numero: '',
+    complemento: 'Apt 12B', bairro: '', cidade: 'New York', estado: 'NY',
+    frete: 'padrao', metodo: 'cartao',
+    cartaoNumero: '4242 4242 4242 4242', cartaoNome: 'MARIA SILVA',
+    cartaoValidade: '12/29', cartaoCvv: '123', parcelas: 1,
+  },
+}
+
 type Erros = Partial<Record<keyof Form, string>>
 
 export default function Checkout({
@@ -61,7 +89,7 @@ export default function Checkout({
   const { lang, t } = useLang()
   const navigate = useNavigate()
 
-  const [etapa, setEtapa] = useState<Etapa>('contato')
+  const [etapa, setEtapa] = useState<Etapa>('inicio')
   const [form, setForm] = useState<Form>(FORM_VAZIO)
   const [erros, setErros] = useState<Erros>({})
   const [buscandoCep, setBuscandoCep] = useState(false)
@@ -82,6 +110,13 @@ export default function Checkout({
   function set<K extends keyof Form>(campo: K, valor: Form[K]) {
     setForm((f) => ({ ...f, [campo]: valor }))
     setErros((e) => (e[campo] ? { ...e, [campo]: undefined } : e))
+  }
+
+  /** Atalho: preenche tudo com o cadastro salvo e vai direto pra revisão. */
+  function usarCadastro() {
+    setForm(PERFIL_SALVO[lang])
+    setErros({})
+    setEtapa('revisao')
   }
 
   /* ── busca de CEP / ZIP ─────────────────────────────────────────────── */
@@ -257,6 +292,59 @@ export default function Checkout({
         )}
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '14px 14px 20px' }}>
+          {/* ── 0. USAR CADASTRO SALVO ─────────────────────────────── */}
+          {etapa === 'inicio' && (
+            <>
+              <Cabecalho Icon={UserCheck} titulo={t('co_saved_title')} desc={t('co_saved_desc')} />
+
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                background: 'var(--cinza-escuro)', borderRadius: 14,
+                padding: 14, marginBottom: 18,
+              }}>
+                <div style={{
+                  width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
+                  background: 'linear-gradient(135deg, var(--laranja), var(--laranja-escuro))',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 17, fontWeight: 800,
+                }}>
+                  {PERFIL_SALVO[lang].nome[0]}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 800 }}>{PERFIL_SALVO[lang].nome}</div>
+                  <div style={{ fontSize: 11, color: 'var(--cinza-claro)' }}>{PERFIL_SALVO[lang].email}</div>
+                  <div style={{ fontSize: 11, color: 'var(--cinza-claro)', marginTop: 2 }}>
+                    {PERFIL_SALVO[lang].cidade} - {PERFIL_SALVO[lang].estado} • Visa •••• 4242
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                <button
+                  onClick={usarCadastro}
+                  style={{
+                    padding: 13, background: 'var(--laranja)', border: 'none', borderRadius: 11,
+                    color: 'var(--branco)', fontSize: 13.5, fontWeight: 800, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                  }}
+                >
+                  <UserCheck size={16} /> {t('co_saved_yes')}
+                </button>
+                <button
+                  onClick={() => setEtapa('contato')}
+                  style={{
+                    padding: 13, background: 'var(--cinza-escuro)',
+                    border: '1px solid var(--cinza-medio)', borderRadius: 11,
+                    color: 'var(--branco)', fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                  }}
+                >
+                  <PencilLine size={15} /> {t('co_saved_no')}
+                </button>
+              </div>
+            </>
+          )}
+
           {/* ── 1. CONTATO ─────────────────────────────────────────── */}
           {etapa === 'contato' && (
             <>

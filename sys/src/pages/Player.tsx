@@ -11,7 +11,7 @@ import { getProdutos } from '../data/produtos'
 import { useUser } from '../context/UserContext'
 import { useLang } from '../context/LangContext'
 import { useCart } from '../context/CartContext'
-import SceneHotspots from '../components/SceneHotspots'
+import SceneShop from '../components/SceneShop'
 import CartSheet from '../components/CartSheet'
 import { VMark } from '../components/Logo'
 
@@ -24,6 +24,8 @@ export default function Player() {
   const { saldo, desbloqueados, gastar, desbloquear } = useUser()
   const { lang, t } = useLang()
   const { quantidade } = useCart()
+  const quantidadeAnterior = useRef(quantidade)
+  const [carrinhoPulso, setCarrinhoPulso] = useState(0)
 
   const drama = dramas.find((d) => d.id === id)
   const epNum = Number(ep ?? 1)
@@ -36,17 +38,23 @@ export default function Player() {
 
   const [playing, setPlaying] = useState(false)
   const [progresso, setProgresso] = useState(0)
-  const [tempoVideo, setTempoVideo] = useState(0)
   const [curtido, setCurtido] = useState(false)
   const [showControls, setShowControls] = useState(true)
   const [dragging, setDragging] = useState(false)
   const [showCarrinho, setShowCarrinho] = useState(false)
+  const [showProdutos, setShowProdutos] = useState(false)
   const [erroMoedas, setErroMoedas] = useState(false)
   const [dicaVista, setDicaVista] = useState(
     () => localStorage.getItem('dv_dica_v') === '1'
   )
 
   const produtosEp = drama ? getProdutos(drama.id, epNum) : []
+
+  // destaca o carrinho por um instante sempre que um item é adicionado
+  useEffect(() => {
+    if (quantidade > quantidadeAnterior.current) setCarrinhoPulso((n) => n + 1)
+    quantidadeAnterior.current = quantidade
+  }, [quantidade])
 
   // esconde controles após 3s de play (suspende durante drag)
   useEffect(() => {
@@ -67,7 +75,6 @@ export default function Player() {
       const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
       v.currentTime = frac * v.duration
       setProgresso(frac)
-      setTempoVideo(v.currentTime)
     }
 
     const onMouseMove = (e: MouseEvent) => onMove(e.clientX)
@@ -97,7 +104,6 @@ export default function Player() {
     const v = videoRef.current
     if (!v || !v.duration || dragging) return
     setProgresso(v.currentTime / v.duration)
-    setTempoVideo(v.currentTime)
   }
 
   function startSeek(clientX: number) {
@@ -108,7 +114,6 @@ export default function Player() {
     const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
     v.currentTime = frac * v.duration
     setProgresso(frac)
-    setTempoVideo(v.currentTime)
     setDragging(true)
   }
 
@@ -120,13 +125,6 @@ export default function Player() {
   }
 
   const sideActions = [
-    {
-      Icon: ShoppingBag,
-      label: quantidade > 0 ? String(quantidade) : t('player_cart_label'),
-      fill: false,
-      badge: quantidade,
-      action: () => setShowCarrinho(true),
-    },
     { Icon: Heart,         label: '12.5K',          fill: curtido, badge: 0, action: () => setCurtido((v) => !v) },
     { Icon: MessageCircle, label: '348',            fill: false,   badge: 0, action: () => {} },
     { Icon: Share2,        label: t('player_free'), fill: false,   badge: 0, action: () => {} },
@@ -214,7 +212,53 @@ export default function Player() {
             </div>
           </div>
 
-          <div style={{ width: 40 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {produtosEp.length > 0 && (
+              <button
+                onClick={() => { setShowProdutos(true); if (!dicaVista) fecharDica() }}
+                aria-label={t('shop_list_title')}
+                style={{
+                  width: 40, height: 40,
+                  background: 'rgba(0,0,0,0.45)',
+                  border: '1.5px solid var(--laranja)', borderRadius: '50%',
+                  color: 'var(--branco)', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  animation: 'dvBreath 3s ease-in-out infinite',
+                }}
+              >
+                <VMark size={18} />
+              </button>
+            )}
+            <button
+              key={carrinhoPulso}
+              onClick={() => setShowCarrinho(true)}
+              aria-label={t('player_cart_label')}
+              style={{
+                position: 'relative',
+                width: 40, height: 40,
+                background: quantidade > 0 ? 'var(--laranja)' : 'rgba(0,0,0,0.45)',
+                border: quantidade > 0 ? 'none' : '1.5px solid rgba(255,255,255,0.4)',
+                borderRadius: '50%',
+                color: 'var(--branco)', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                animation: carrinhoPulso > 0 ? 'dvPop 0.4s ease-out' : 'none',
+              }}
+            >
+              <ShoppingBag size={18} />
+              {quantidade > 0 && (
+                <span style={{
+                  position: 'absolute', top: -4, right: -4,
+                  minWidth: 18, height: 18, padding: '0 4px',
+                  background: 'var(--branco)', color: 'var(--laranja)',
+                  borderRadius: 9, fontSize: 10, fontWeight: 800,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }}>
+                  {quantidade}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
       )}
 
@@ -350,25 +394,28 @@ export default function Player() {
         </div>
       )}
 
-      {/* ── PRODUTOS DA CENA (marcadores V) ───────────────────────── */}
+      {/* ── LISTA DE PRODUTOS DA CENA ─────────────────────────────── */}
       {!bloqueado && (
-        <SceneHotspots
-          produtos={produtosEp}
-          img={episodio.thumb}
-          dramaId={drama.id}
-          dramaTitulo={drama.titulo}
-          ep={epNum}
-          realcar={showControls || !playing}
-          tempoVideo={tempoVideo}
-        />
+        <div onClick={(e) => e.stopPropagation()}>
+          <SceneShop
+            open={showProdutos}
+            onClose={() => setShowProdutos(false)}
+            produtos={produtosEp}
+            img={episodio.thumb}
+            dramaId={drama.id}
+            dramaTitulo={drama.titulo}
+            ep={epNum}
+          />
+        </div>
       )}
 
       {/* ── DICA DE PRIMEIRO USO ──────────────────────────────────── */}
-      {!bloqueado && !dicaVista && produtosEp.length > 0 && (
+      {!bloqueado && !dicaVista && produtosEp.length > 0 && (showControls || !playing) && (
         <div
           onClick={(e) => { e.stopPropagation(); fecharDica() }}
           style={{
-            position: 'absolute', left: 16, right: 16, bottom: 150, zIndex: 45,
+            position: 'absolute', top: 96, right: 16, left: 16, zIndex: 45,
+            maxWidth: 280, marginLeft: 'auto',
             padding: '14px 16px',
             background: 'rgba(20,20,20,0.96)',
             backdropFilter: 'blur(12px)',
