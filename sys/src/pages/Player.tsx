@@ -205,60 +205,63 @@ export default function Player() {
             <ArrowLeft size={18} />
           </button>
 
-          <div style={{ textAlign: 'center', flex: 1 }}>
+          <div style={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 14, fontWeight: 700 }}>{drama.titulo[lang]}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.65)' }}>
-              Ep {epNum}: {episodio.titulo[lang]}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              fontSize: 11, color: 'rgba(255,255,255,0.65)',
+            }}>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                Ep {epNum}: {episodio.titulo[lang]}
+              </span>
+              {produtosEp.length > 0 && (
+                <button
+                  onClick={() => { setShowProdutos(true); if (!dicaVista) fecharDica() }}
+                  aria-label={t('shop_list_title')}
+                  style={{
+                    width: 22, height: 22, flexShrink: 0, padding: 0,
+                    background: 'rgba(255,107,26,0.22)',
+                    border: '1.5px solid var(--laranja)', borderRadius: '50%',
+                    color: 'var(--branco)', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    animation: 'dvBreath 3s ease-in-out infinite',
+                  }}
+                >
+                  <VMark size={12} />
+                </button>
+              )}
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {produtosEp.length > 0 && (
-              <button
-                onClick={() => { setShowProdutos(true); if (!dicaVista) fecharDica() }}
-                aria-label={t('shop_list_title')}
-                style={{
-                  width: 40, height: 40,
-                  background: 'rgba(0,0,0,0.45)',
-                  border: '1.5px solid var(--laranja)', borderRadius: '50%',
-                  color: 'var(--branco)', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  animation: 'dvBreath 3s ease-in-out infinite',
-                }}
-              >
-                <VMark size={18} />
-              </button>
-            )}
-            <button
-              key={carrinhoPulso}
-              onClick={() => setShowCarrinho(true)}
-              aria-label={t('player_cart_label')}
-              style={{
-                position: 'relative',
-                width: 40, height: 40,
-                background: quantidade > 0 ? 'var(--laranja)' : 'rgba(0,0,0,0.45)',
-                border: quantidade > 0 ? 'none' : '1.5px solid rgba(255,255,255,0.4)',
-                borderRadius: '50%',
-                color: 'var(--branco)', cursor: 'pointer',
+          <button
+            key={carrinhoPulso}
+            onClick={() => setShowCarrinho(true)}
+            aria-label={t('player_cart_label')}
+            style={{
+              position: 'relative', flexShrink: 0,
+              width: 40, height: 40,
+              background: quantidade > 0 ? 'var(--laranja)' : 'rgba(0,0,0,0.45)',
+              border: quantidade > 0 ? 'none' : '1.5px solid rgba(255,255,255,0.4)',
+              borderRadius: '50%',
+              color: 'var(--branco)', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              animation: carrinhoPulso > 0 ? 'dvPop 0.4s ease-out' : 'none',
+            }}
+          >
+            <ShoppingBag size={18} />
+            {quantidade > 0 && (
+              <span style={{
+                position: 'absolute', top: -4, right: -4,
+                minWidth: 18, height: 18, padding: '0 4px',
+                background: 'var(--branco)', color: 'var(--laranja)',
+                borderRadius: 9, fontSize: 10, fontWeight: 800,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                animation: carrinhoPulso > 0 ? 'dvPop 0.4s ease-out' : 'none',
-              }}
-            >
-              <ShoppingBag size={18} />
-              {quantidade > 0 && (
-                <span style={{
-                  position: 'absolute', top: -4, right: -4,
-                  minWidth: 18, height: 18, padding: '0 4px',
-                  background: 'var(--branco)', color: 'var(--laranja)',
-                  borderRadius: 9, fontSize: 10, fontWeight: 800,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                }}>
-                  {quantidade}
-                </span>
-              )}
-            </button>
-          </div>
+                boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+              }}>
+                {quantidade}
+              </span>
+            )}
+          </button>
         </div>
       )}
 
@@ -414,8 +417,8 @@ export default function Player() {
         <div
           onClick={(e) => { e.stopPropagation(); fecharDica() }}
           style={{
-            position: 'absolute', top: 96, right: 16, left: 16, zIndex: 45,
-            maxWidth: 280, marginLeft: 'auto',
+            position: 'absolute', top: 96, left: 16, right: 16, zIndex: 45,
+            maxWidth: 320, margin: '0 auto',
             padding: '14px 16px',
             background: 'rgba(20,20,20,0.96)',
             backdropFilter: 'blur(12px)',
