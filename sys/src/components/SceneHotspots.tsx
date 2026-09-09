@@ -3,7 +3,7 @@ import { Check } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useLang } from '../context/LangContext'
 import { formatMoeda, moedasDeCashback } from '../data/checkout'
-import { visivelEm, type Produto } from '../data/produtos'
+import { visivelEm, posicaoEm, type Produto } from '../data/produtos'
 
 type Props = {
   produtos: Produto[]
@@ -76,6 +76,7 @@ export default function SceneHotspots({
       <div style={{ position: 'absolute', inset: 0, zIndex: 22, pointerEvents: 'none' }}>
         {produtos.map((p) => {
           if (!visivelEm(p, tempoVideo)) return null
+          const pos = posicaoEm(p, tempoVideo)
           return (
             <div
               key={p.id}
@@ -88,13 +89,13 @@ export default function SceneHotspots({
               }}
               style={{
                 position: 'absolute',
-                left: `${p.spot.x}%`,
+                left: `${pos.x}%`,
                 // nunca deixa a área de toque subir por cima do botão de
                 // voltar / topo fixo, mesmo em telas baixas
-                top: `max(${p.spot.y}%, 132px)`,
+                top: `max(${pos.y}%, 132px)`,
                 transform: 'translate(-50%, -50%)',
-                width: 120,
-                height: 150,
+                width: 150,
+                height: 190,
                 cursor: 'pointer',
                 pointerEvents: 'auto',
               }}

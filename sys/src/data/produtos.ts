@@ -21,13 +21,21 @@ export type Produto = {
   img?: string
   /**
    * Janelas de tempo (em segundos do vídeo) em que o objeto está de fato
-   * visível na coordenada de `spot` — conferido quadro a quadro contra o
-   * vídeo real, não estimado. Fora dessas janelas o item não é clicável
-   * diretamente na cena (continua na lista do V, só não tem hotspot no
-   * vídeo). Sem essa lista, o hotspot vale o episódio inteiro (cena
-   * estática, câmera fixa).
+   * visível — conferido quadro a quadro contra o vídeo real, não
+   * estimado. Fora dessas janelas o item não é clicável diretamente na
+   * cena (continua na lista do V, só não tem hotspot no vídeo). Sem essa
+   * lista, o hotspot vale o episódio inteiro (cena estática, câmera fixa).
    */
   visivel?: [number, number][]
+  /**
+   * Trilha de posição do objeto ao longo do tempo — usada só pela área
+   * de toque durante o vídeo, quando `spot` sozinho não segue bem o
+   * objeto (câmera na mão, plano longo). Cada ponto é (segundo, x%, y%);
+   * a posição atual é interpolada entre os dois pontos mais próximos.
+   * `spot` continua sendo a coordenada usada no recorte da miniatura
+   * (imagem estática), então os dois podem divergir de propósito.
+   */
+  trilha?: { t: number; x: number; y: number }[]
 }
 
 /**
@@ -59,6 +67,18 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
       preco: { pt: 189.9, en: 49.9 },
       spot: { x: 40, y: 78 },
       visivel: [[0, 40]],
+      // 0-18s tem bastante deslocamento de câmera (a camisa passa de um
+      // lado ao outro do quadro); 20s em diante a cena estabiliza e volta
+      // a bater com `spot`. Pontos conferidos com grade de % sobre frames
+      // reais extraídos a cada ~4s (não estimados de memória).
+      trilha: [
+        { t: 0, x: 20, y: 65 },
+        { t: 8, x: 20, y: 70 },
+        { t: 12, x: 35, y: 70 },
+        { t: 16, x: 42, y: 55 },
+        { t: 18, x: 35, y: 65 },
+        { t: 20, x: 40, y: 78 },
+      ],
     },
     {
       id: 'p-cf1-cortina',
@@ -107,6 +127,28 @@ export function getProdutos(dramaId: string, ep: number): Produto[] {
 export function visivelEm(produto: Produto, tempo: number): boolean {
   if (!produto.visivel) return true
   return produto.visivel.some(([ini, fim]) => tempo >= ini && tempo <= fim)
+}
+
+/**
+ * Posição da área de toque no vídeo no instante atual. Sem `trilha`, é
+ * sempre `spot`. Com `trilha`, interpola entre os dois pontos mais
+ * próximos do tempo atual (e trava nas pontas fora do intervalo).
+ */
+export function posicaoEm(produto: Produto, tempo: number): { x: number; y: number } {
+  const trilha = produto.trilha
+  if (!trilha || trilha.length === 0) return produto.spot
+  if (tempo <= trilha[0].t) return trilha[0]
+  const ultimo = trilha[trilha.length - 1]
+  if (tempo >= ultimo.t) return ultimo
+  for (let i = 0; i < trilha.length - 1; i++) {
+    const a = trilha[i]
+    const b = trilha[i + 1]
+    if (tempo >= a.t && tempo <= b.t) {
+      const f = (tempo - a.t) / (b.t - a.t)
+      return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f }
+    }
+  }
+  return produto.spot
 }
 
 /**
