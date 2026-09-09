@@ -7,11 +7,12 @@ import {
 } from 'lucide-react'
 import { dramas } from '../data/dramas'
 import { getEpisodios } from '../data/episodios'
-import { getProdutos } from '../data/produtos'
+import { getProdutos, visivelEm } from '../data/produtos'
 import { useUser } from '../context/UserContext'
 import { useLang } from '../context/LangContext'
 import { useCart } from '../context/CartContext'
 import SceneShop from '../components/SceneShop'
+import SceneHotspots from '../components/SceneHotspots'
 import CartSheet from '../components/CartSheet'
 import { VMark } from '../components/Logo'
 
@@ -38,6 +39,9 @@ export default function Player() {
 
   const [playing, setPlaying] = useState(false)
   const [progresso, setProgresso] = useState(0)
+  const [tempoVideo, setTempoVideo] = useState(0)
+  const [vPiscar, setVPiscar] = useState(0)
+  const produtosAtivosRef = useRef<Set<string>>(new Set())
   const [curtido, setCurtido] = useState(false)
   const [showControls, setShowControls] = useState(true)
   const [dragging, setDragging] = useState(false)
@@ -55,6 +59,16 @@ export default function Player() {
     if (quantidade > quantidadeAnterior.current) setCarrinhoPulso((n) => n + 1)
     quantidadeAnterior.current = quantidade
   }, [quantidade])
+
+  // pisca o V sempre que um produto novo fica tocável na cena
+  useEffect(() => {
+    const ativosAgora = new Set(
+      produtosEp.filter((p) => visivelEm(p, tempoVideo)).map((p) => p.id)
+    )
+    const entrouAlgum = [...ativosAgora].some((id) => !produtosAtivosRef.current.has(id))
+    if (entrouAlgum) setVPiscar((n) => n + 1)
+    produtosAtivosRef.current = ativosAgora
+  }, [tempoVideo, produtosEp])
 
   // esconde controles após 3s de play (suspende durante drag)
   useEffect(() => {
@@ -75,6 +89,7 @@ export default function Player() {
       const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
       v.currentTime = frac * v.duration
       setProgresso(frac)
+      setTempoVideo(v.currentTime)
     }
 
     const onMouseMove = (e: MouseEvent) => onMove(e.clientX)
@@ -104,6 +119,7 @@ export default function Player() {
     const v = videoRef.current
     if (!v || !v.duration || dragging) return
     setProgresso(v.currentTime / v.duration)
+    setTempoVideo(v.currentTime)
   }
 
   function startSeek(clientX: number) {
@@ -114,6 +130,7 @@ export default function Player() {
     const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
     v.currentTime = frac * v.duration
     setProgresso(frac)
+    setTempoVideo(v.currentTime)
     setDragging(true)
   }
 
@@ -219,6 +236,7 @@ export default function Player() {
                   onClick={() => { setShowProdutos(true); if (!dicaVista) fecharDica() }}
                   aria-label={t('shop_list_title')}
                   style={{
+                    position: 'relative',
                     width: 22, height: 22, flexShrink: 0, padding: 0,
                     background: 'rgba(255,107,26,0.22)',
                     border: '1.5px solid var(--laranja)', borderRadius: '50%',
@@ -227,6 +245,16 @@ export default function Player() {
                     animation: 'dvBreath 3s ease-in-out infinite',
                   }}
                 >
+                  {vPiscar > 0 && (
+                    <span
+                      key={vPiscar}
+                      style={{
+                        position: 'absolute', inset: -5, borderRadius: '50%',
+                        border: '2px solid var(--laranja)', pointerEvents: 'none',
+                        animation: 'dvPing 0.7s ease-out 2',
+                      }}
+                    />
+                  )}
                   <VMark size={12} />
                 </button>
               )}
@@ -395,6 +423,19 @@ export default function Player() {
             }} />
           </div>
         </div>
+      )}
+
+      {/* ── ÁREAS DE TOQUE NOS PRODUTOS DA CENA ───────────────────── */}
+      {!bloqueado && produtosEp.length > 0 && (
+        <SceneHotspots
+          produtos={produtosEp}
+          img={episodio.thumb}
+          dramaId={drama.id}
+          dramaTitulo={drama.titulo}
+          ep={epNum}
+          tempoVideo={tempoVideo}
+          onAdicionar={() => setVPiscar((n) => n + 1)}
+        />
       )}
 
       {/* ── LISTA DE PRODUTOS DA CENA ─────────────────────────────── */}

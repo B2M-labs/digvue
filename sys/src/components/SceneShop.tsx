@@ -41,7 +41,7 @@ export default function SceneShop({
       titulo: p.titulo,
       marca: p.marca,
       preco: p.preco,
-      img,
+      img: p.img ?? img,
       spot: p.spot,
       zoom: p.zoom ?? 260,
       dramaId,
@@ -115,7 +115,7 @@ export default function SceneShop({
                 <div style={{
                   width: 56, height: 56, borderRadius: 10, flexShrink: 0,
                   position: 'relative', overflow: 'hidden',
-                  ...recorteDaCena(img, p.spot, p.zoom),
+                  ...recorteDaCena(p.img ?? img, p.spot, p.zoom),
                 }}>
                   {noCarrinho && (
                     <div style={{
