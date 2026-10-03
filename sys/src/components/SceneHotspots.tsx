@@ -3,7 +3,7 @@ import { Check } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useLang } from '../context/LangContext'
 import { formatMoeda, moedasDeCashback } from '../data/checkout'
-import { visivelEm, posicaoEm, type Produto } from '../data/produtos'
+import { jaApareceu, posicaoEm, type Produto } from '../data/produtos'
 
 type Props = {
   produtos: Produto[]
@@ -12,7 +12,7 @@ type Props = {
   dramaId: string
   dramaTitulo: { pt: string; en: string }
   ep: number
-  /** tempo atual do vídeo (segundos) — só ativa o toque no objeto na janela em que ele é visível */
+  /** tempo atual do vídeo (segundos) — libera o toque a partir da primeira vez que o produto aparece */
   tempoVideo: number
   /** ids que acabaram de entrar em cena — ganham a bordinha de destaque por ~1.3s */
   recemAparecidos: Set<string>
@@ -77,7 +77,10 @@ export default function SceneHotspots({
       */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 22, pointerEvents: 'none' }}>
         {produtos.map((p) => {
-          if (!visivelEm(p, tempoVideo)) return null
+          // libera o toque assim que o produto aparece pela primeira vez
+          // (com o destaque) e mantém liberado pelo resto do vídeo — não
+          // fecha de novo quando a janela de visibilidade estrita termina
+          if (!jaApareceu(p, tempoVideo)) return null
           const pos = posicaoEm(p, tempoVideo)
           const apareceu = recemAparecidos.has(p.id)
           return (

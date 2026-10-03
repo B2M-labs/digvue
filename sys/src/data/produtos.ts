@@ -130,6 +130,19 @@ export function visivelEm(produto: Produto, tempo: number): boolean {
 }
 
 /**
+ * Uma vez que o produto teve seu destaque (apareceu nitidamente pela
+ * primeira vez e o V piscou pra avisar), o toque na cena continua
+ * liberado pelo resto do vídeo — não fecha de novo quando a janela de
+ * visibilidade estrita termina. `visivelEm` continua controlando quando
+ * o destaque *acontece*; esta função controla quando o toque fica
+ * disponível.
+ */
+export function jaApareceu(produto: Produto, tempo: number): boolean {
+  if (!produto.visivel || produto.visivel.length === 0) return true
+  return tempo >= produto.visivel[0][0]
+}
+
+/**
  * Posição da área de toque no vídeo no instante atual. Sem `trilha`, é
  * sempre `spot`. Com `trilha`, interpola entre os dois pontos mais
  * próximos do tempo atual (e trava nas pontas fora do intervalo).
