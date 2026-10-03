@@ -14,6 +14,8 @@ type Props = {
   ep: number
   /** tempo atual do vídeo (segundos) — só ativa o toque no objeto na janela em que ele é visível */
   tempoVideo: number
+  /** ids que acabaram de entrar em cena — ganham a bordinha de destaque por ~1.3s */
+  recemAparecidos: Set<string>
   /** avisa o player pra piscar o V como confirmação (o vídeo nunca pausa) */
   onAdicionar: () => void
 }
@@ -27,7 +29,7 @@ type Toast = { id: string; titulo: string; preco: string; moedas: number }
  * para o que está "no ar" no momento, não um marcador na cena.
  */
 export default function SceneHotspots({
-  produtos, img, dramaId, dramaTitulo, ep, tempoVideo, onAdicionar,
+  produtos, img, dramaId, dramaTitulo, ep, tempoVideo, recemAparecidos, onAdicionar,
 }: Props) {
   const { adicionar } = useCart()
   const { lang, t } = useLang()
@@ -77,6 +79,7 @@ export default function SceneHotspots({
         {produtos.map((p) => {
           if (!visivelEm(p, tempoVideo)) return null
           const pos = posicaoEm(p, tempoVideo)
+          const apareceu = recemAparecidos.has(p.id)
           return (
             <div
               key={p.id}
@@ -99,7 +102,23 @@ export default function SceneHotspots({
                 cursor: 'pointer',
                 pointerEvents: 'auto',
               }}
-            />
+            >
+              {/* bordinha discreta — só no instante em que o produto aparece,
+                  sincronizada com o V piscando no topo; some sozinha e o
+                  toque continua ativo normalmente depois disso */}
+              {apareceu && (
+                <div
+                  style={{
+                    position: 'absolute', inset: 20,
+                    borderRadius: 14,
+                    border: '1.5px solid rgba(255,138,71,0.85)',
+                    boxShadow: '0 0 0 1px rgba(0,0,0,0.25), 0 0 14px rgba(255,107,26,0.35)',
+                    pointerEvents: 'none',
+                    animation: 'dvOutline 1.3s ease-out',
+                  }}
+                />
+              )}
+            </div>
           )
         })}
       </div>

@@ -41,6 +41,7 @@ export default function Player() {
   const [progresso, setProgresso] = useState(0)
   const [tempoVideo, setTempoVideo] = useState(0)
   const [vPiscar, setVPiscar] = useState(0)
+  const [recemAparecidos, setRecemAparecidos] = useState<Set<string>>(new Set())
   const produtosAtivosRef = useRef<Set<string>>(new Set())
   const [curtido, setCurtido] = useState(false)
   const [showControls, setShowControls] = useState(true)
@@ -60,15 +61,26 @@ export default function Player() {
     quantidadeAnterior.current = quantidade
   }, [quantidade])
 
-  // pisca o V sempre que um produto novo fica tocável na cena
+  // pisca o V e destaca o produto por um instante sempre que ele aparece
+  // nitidamente na cena pela primeira vez
   useEffect(() => {
     const ativosAgora = new Set(
       produtosEp.filter((p) => visivelEm(p, tempoVideo)).map((p) => p.id)
     )
-    const entrouAlgum = [...ativosAgora].some((id) => !produtosAtivosRef.current.has(id))
-    if (entrouAlgum) setVPiscar((n) => n + 1)
+    const novos = [...ativosAgora].filter((id) => !produtosAtivosRef.current.has(id))
+    if (novos.length > 0) {
+      setVPiscar((n) => n + 1)
+      setRecemAparecidos(new Set(novos))
+    }
     produtosAtivosRef.current = ativosAgora
   }, [tempoVideo, produtosEp])
+
+  // o destaque no produto é só uma confirmação visual: fecha sozinho
+  useEffect(() => {
+    if (recemAparecidos.size === 0) return
+    const timer = setTimeout(() => setRecemAparecidos(new Set()), 1300)
+    return () => clearTimeout(timer)
+  }, [recemAparecidos])
 
   // esconde controles após 3s de play (suspende durante drag)
   useEffect(() => {
@@ -434,6 +446,7 @@ export default function Player() {
           dramaTitulo={drama.titulo}
           ep={epNum}
           tempoVideo={tempoVideo}
+          recemAparecidos={recemAparecidos}
           onAdicionar={() => setVPiscar((n) => n + 1)}
         />
       )}
