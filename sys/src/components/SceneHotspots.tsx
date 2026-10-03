@@ -76,16 +76,18 @@ export default function SceneHotspots({
         compartilhar); priorizamos a compra, que é a ação que importa.
       */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 22, pointerEvents: 'none' }}>
-        {produtos.map((p) => {
+        {produtos.flatMap((p) => {
           // libera o toque assim que o produto aparece pela primeira vez
           // (com o destaque) e mantém liberado pelo resto do vídeo — não
           // fecha de novo quando a janela de visibilidade estrita termina
-          if (!jaApareceu(p, tempoVideo)) return null
-          const pos = posicaoEm(p, tempoVideo)
+          if (!jaApareceu(p, tempoVideo)) return []
           const apareceu = recemAparecidos.has(p.id)
-          return (
+          // um produto pode ter mais de um ponto de toque na cena (ex: os
+          // dois painéis de uma cortina) — todos levam ao mesmo item
+          const posicoes = [posicaoEm(p, tempoVideo), ...(p.hotspotsExtras ?? [])]
+          return posicoes.map((pos, i) => (
             <div
-              key={p.id}
+              key={`${p.id}-${i}`}
               role="button"
               tabIndex={0}
               aria-label={`${t('shop_add_btn')} — ${p.titulo[lang]}`}
@@ -128,7 +130,7 @@ export default function SceneHotspots({
                 />
               )}
             </div>
-          )
+          ))
         })}
       </div>
 

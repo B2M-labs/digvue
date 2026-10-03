@@ -36,6 +36,14 @@ export type Produto = {
    * (imagem estática), então os dois podem divergir de propósito.
    */
   trilha?: { t: number; x: number; y: number }[]
+  /**
+   * Pontos extras de toque para o mesmo produto, quando o objeto real
+   * aparece em mais de um lugar da cena ao mesmo tempo (ex: uma cortina
+   * com um painel de cada lado da janela). Cada ponto usa a mesma janela
+   * `visivel` do produto — só a posição muda. `spot` continua sendo só a
+   * coordenada da miniatura.
+   */
+  hotspotsExtras?: { x: number; y: number }[]
 }
 
 /**
@@ -55,10 +63,11 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
   // ── Casamento Falso — ep 1: casal enrolado numa camisa azul, cortina
   // ao fundo (vídeo Pexels 9497521). É um plano dinâmico (câmera na mão) —
   // cada `visivel` foi conferido a cada 0.25-1s contra o vídeo real:
-  // camisa dele estável 0-40s; cortina em dois trechos, 5-10s e 20-38s;
-  // camisa branca dela só aparece depois dos 29s (antes disso está coberta
-  // pelo abraço) e segue estável até ~38s — por isso usa um frame próprio
-  // (`img`) em vez do poster do episódio, que não mostra a peça.
+  // camisa dele estável 0-40s; o painel direito da cortina (perto da
+  // janela, longe do abraço) fica parado e limpo o tempo todo, 0-38s —
+  // por isso vira o primeiro destaque da cena, com o painel esquerdo como
+  // segundo ponto de toque; camisa branca dela aparece num lampejo em
+  // 19-20s (coberta pelo abraço logo depois) e volta estável em 29-38s.
   '1-1': [
     {
       id: 'p-cf1-camisa-oxford',
@@ -85,8 +94,14 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
       titulo: { pt: 'Cortina voil off-white', en: 'Off-White Sheer Curtain' },
       marca: 'Casa Vivo',
       preco: { pt: 319.9, en: 84.9 },
+      // painel esquerdo (perto do casal) — miniatura usa este, mas só fica
+      // limpo em dois trechos: 5-10s e 20-38s.
       spot: { x: 12, y: 20 },
-      visivel: [[5, 10], [20, 38]],
+      // painel direito: conferido a cada 1s contra o vídeo real e fica
+      // limpo o tempo inteiro de 0 a 38s, sem nenhuma oclusão — por isso
+      // ele que define a janela `visivel` do produto inteiro.
+      hotspotsExtras: [{ x: 90, y: 12 }],
+      visivel: [[0, 38]],
     },
     {
       id: 'p-cf1-camisa-atriz',
@@ -95,7 +110,7 @@ export const produtosPorEpisodio: Record<string, Produto[]> = {
       preco: { pt: 149.9, en: 39.9 },
       spot: { x: 90, y: 70 },
       img: '/assets/thumbnails/cf1-camisa-atriz.jpg',
-      visivel: [[29, 38]],
+      visivel: [[19, 20], [29, 38]],
     },
   ],
 

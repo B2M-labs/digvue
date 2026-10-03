@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { X, Plus, Check } from 'lucide-react'
+import { X, Plus, Minus, Check } from 'lucide-react'
 import { VMark } from './Logo'
 import { useCart } from '../context/CartContext'
 import { useLang } from '../context/LangContext'
@@ -25,7 +25,7 @@ type Props = {
 export default function SceneShop({
   open, onClose, produtos, img, dramaId, dramaTitulo, ep,
 }: Props) {
-  const { adicionar, temNoCarrinho } = useCart()
+  const { itens, adicionar, alterarQtd } = useCart()
   const { lang, t } = useLang()
   const [recemAdicionado, setRecemAdicionado] = useState<string | null>(null)
 
@@ -101,7 +101,7 @@ export default function SceneShop({
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '6px 16px 16px' }}>
           {produtos.map((p) => {
-            const noCarrinho = temNoCarrinho(p.id)
+            const qtd = itens.find((i) => i.id === p.id)?.qtd ?? 0
             const ativo = recemAdicionado === p.id
             return (
               <div
@@ -117,7 +117,7 @@ export default function SceneShop({
                   position: 'relative', overflow: 'hidden',
                   ...recorteDaCena(p.img ?? img, p.spot, p.zoom),
                 }}>
-                  {noCarrinho && (
+                  {qtd > 0 && (
                     <div style={{
                       position: 'absolute', bottom: 2, right: 2,
                       width: 16, height: 16, borderRadius: '50%',
@@ -141,27 +141,50 @@ export default function SceneShop({
                   </div>
                 </div>
 
-                <button
-                  onClick={() => onComprar(p)}
-                  aria-label={`${t('shop_add_btn')} — ${p.titulo[lang]}`}
-                  style={{
-                    flexShrink: 0,
-                    padding: '9px 13px',
-                    background: ativo ? '#4ade80' : noCarrinho ? 'var(--cinza-escuro)' : 'var(--laranja)',
-                    border: noCarrinho && !ativo ? '1px solid #4ade80' : 'none',
-                    borderRadius: 10,
-                    color: ativo ? '#0A0A0A' : noCarrinho ? '#4ade80' : 'var(--branco)',
-                    fontSize: 12, fontWeight: 800, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: 5,
-                    transition: 'background 0.2s',
-                  }}
-                >
-                  {ativo
-                    ? <><Check size={13} strokeWidth={3} /> {t('shop_added')}</>
-                    : noCarrinho
-                      ? <><Check size={13} strokeWidth={3} /> {t('shop_in_cart')}</>
-                      : <><Plus size={13} strokeWidth={3} /> {t('shop_add_btn')}</>}
-                </button>
+                {qtd > 0 ? (
+                  <div style={{
+                    flexShrink: 0, display: 'flex', alignItems: 'center', gap: 2,
+                    background: ativo ? 'rgba(74,222,128,0.16)' : 'var(--cinza-escuro)',
+                    border: `1px solid ${ativo ? '#4ade80' : 'var(--cinza-medio)'}`,
+                    borderRadius: 10, padding: 3,
+                    transition: 'background 0.2s, border-color 0.2s',
+                  }}>
+                    <button
+                      onClick={() => alterarQtd(p.id, -1)}
+                      aria-label={`${t('cart_less')} — ${p.titulo[lang]}`}
+                      style={stepBtn}
+                    >
+                      <Minus size={13} strokeWidth={3} />
+                    </button>
+                    <span style={{ fontSize: 13, fontWeight: 800, minWidth: 20, textAlign: 'center' }}>
+                      {qtd}
+                    </span>
+                    <button
+                      onClick={() => onComprar(p)}
+                      aria-label={`${t('shop_add_btn')} — ${p.titulo[lang]}`}
+                      style={stepBtn}
+                    >
+                      <Plus size={13} strokeWidth={3} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => onComprar(p)}
+                    aria-label={`${t('shop_add_btn')} — ${p.titulo[lang]}`}
+                    style={{
+                      flexShrink: 0,
+                      padding: '9px 13px',
+                      background: 'var(--laranja)',
+                      border: 'none',
+                      borderRadius: 10,
+                      color: 'var(--branco)',
+                      fontSize: 12, fontWeight: 800, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 5,
+                    }}
+                  >
+                    <Plus size={13} strokeWidth={3} /> {t('shop_add_btn')}
+                  </button>
+                )}
               </div>
             )
           })}
@@ -177,3 +200,10 @@ export default function SceneShop({
     </div>
   )
 }
+
+const stepBtn = {
+  width: 24, height: 24, borderRadius: 7,
+  background: 'var(--cinza-medio)', border: 'none',
+  color: 'var(--branco)', cursor: 'pointer',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+} as const
