@@ -223,11 +223,14 @@ export default function Player() {
       {/* ── TOP BAR ───────────────────────────────────────────────── */}
       {/* sempre visível (não segue showControls) — o V e o carrinho
           precisam estar na tela o tempo todo, já que produtos aparecem e
-          somem em qualquer momento do vídeo, não só nos primeiros segundos */}
+          somem em qualquer momento do vídeo, não só nos primeiros segundos.
+          zIndex 26, acima da camada de toque da cena (22): botão de voltar
+          e carrinho são controles de verdade e nunca podem ser "roubados"
+          por uma área de toque de produto que passe por baixo deles. */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0,
         padding: '48px 20px 16px',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 20,
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 26,
       }} onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => navigate(-1)}
