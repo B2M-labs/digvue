@@ -221,12 +221,14 @@ export default function Player() {
       }} />
 
       {/* ── TOP BAR ───────────────────────────────────────────────── */}
-      {(showControls || !playing) && (
-        <div style={{
-          position: 'absolute', top: 0, left: 0, right: 0,
-          padding: '48px 20px 16px',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 20,
-        }} onClick={(e) => e.stopPropagation()}>
+      {/* sempre visível (não segue showControls) — o V e o carrinho
+          precisam estar na tela o tempo todo, já que produtos aparecem e
+          somem em qualquer momento do vídeo, não só nos primeiros segundos */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0,
+        padding: '48px 20px 16px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 20,
+      }} onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => navigate(-1)}
             style={{ width: 40, height: 40, background: 'rgba(0,0,0,0.45)', border: 'none', borderRadius: '50%', color: 'var(--branco)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -303,7 +305,6 @@ export default function Player() {
             )}
           </button>
         </div>
-      )}
 
       {/* ── BOTÃO PLAY CENTRAL ────────────────────────────────────── */}
       {!bloqueado && (showControls || !playing) && (

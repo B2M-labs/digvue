@@ -103,18 +103,24 @@ export default function SceneHotspots({
                 pointerEvents: 'auto',
               }}
             >
-              {/* bordinha discreta — só no instante em que o produto aparece,
-                  sincronizada com o V piscando no topo; some sozinha e o
-                  toque continua ativo normalmente depois disso */}
+              {/* brilho discreto — só no instante em que o produto aparece,
+                  sincronizado com o V piscando no topo; some sozinho e o
+                  toque continua ativo normalmente depois disso. Um brilho
+                  (em vez de borda) porque o objeto real nunca é um
+                  retângulo perfeito — um contorno geométrico sempre fica
+                  "flutuando" fora da forma da peça, enquanto um brilho
+                  suave funciona em cima de qualquer silhueta. */}
               {apareceu && (
                 <div
                   style={{
-                    position: 'absolute', inset: 20,
-                    borderRadius: 14,
-                    border: '1.5px solid rgba(255,138,71,0.85)',
-                    boxShadow: '0 0 0 1px rgba(0,0,0,0.25), 0 0 14px rgba(255,107,26,0.35)',
+                    position: 'absolute',
+                    left: '50%', top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 120, height: 120,
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(255,170,100,0.5) 0%, rgba(255,107,26,0.22) 45%, rgba(255,107,26,0) 72%)',
                     pointerEvents: 'none',
-                    animation: 'dvOutline 1.3s ease-out',
+                    animation: 'dvGlow 1.3s ease-out',
                   }}
                 />
               )}
